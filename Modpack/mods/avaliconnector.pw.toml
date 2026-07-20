@@ -5,4 +5,4 @@ side = "both"
 [download]
 url = ".bin/avaliconnector-1.0.0.jar"
 hash-format = "sha256"
-hash = "9e5d4e732334e18e2d72e74364077f4bc6ad19b9bfd87b4ed82b88b2ffb8b3ec"
+hash = "a7b3a42809b82e712d4a5f5abd6b8541d6f9493c8f0ea9b390e6fd6f2b078372"

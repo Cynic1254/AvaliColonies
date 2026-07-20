@@ -1,14 +1,6 @@
 hash-format = "sha256"
 
 [[files]]
-file = ".bin/avaliconnector-1.0.0.jar"
-hash = "9e5d4e732334e18e2d72e74364077f4bc6ad19b9bfd87b4ed82b88b2ffb8b3ec"
-
-[[files]]
-file = ".bin/avalitheme-1.0.0.jar"
-hash = "b6973c569b4363706d1dcbbffb639021d0a79ada58bd4ce37126a3d064e210ca"
-
-[[files]]
 file = "mods/ad-astra.pw.toml"
 hash = "da42d2a6e6e3f7bd10df625ab23d6ba8a50ecb3545c1c3c6bda4f826caa5d51b"
 metafile = true
@@ -20,12 +12,12 @@ metafile = true
 
 [[files]]
 file = "mods/avaliconnector.pw.toml"
-hash = "178627e2e877350f4142fa309444adc9577f8d6430d5f5fa7c8968898ecd98a7"
+hash = "11f512162cf0916e92e02c53243b9b7608e52e6acefd01c4e620cd28021bb37f"
 metafile = true
 
 [[files]]
 file = "mods/avalitheme.pw.toml"
-hash = "53ba361fbe8239b292e86b60a0fe7a23c55fbc329f7ba967c8ddde578d7facf6"
+hash = "b97c09de098e9da2d9dd71cbf95227caaa173bd648c1b09f623c700c43b7458a"
 metafile = true
 
 [[files]]

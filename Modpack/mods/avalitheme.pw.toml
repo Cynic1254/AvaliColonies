@@ -5,4 +5,4 @@ side = "both"
 [download]
 url = ".bin/avalitheme-1.0.0.jar"
 hash-format = "sha256"
-hash = "b6973c569b4363706d1dcbbffb639021d0a79ada58bd4ce37126a3d064e210ca"
+hash = "c49f515dba48f251b603a73a4879f50ad2459fa2db1e878fdccd87dd178ebb27"
