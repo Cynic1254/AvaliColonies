@@ -63,7 +63,7 @@ jobs:
 
   update-dev-packwiz:
     needs: [evaluate-changes, run-compiler]
-    if: ${{ always() && !cancelled() && !failed() }}
+    if: ${{ always() && !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
