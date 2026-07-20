@@ -11,11 +11,6 @@ hash = "5e9edd1fd2395f14a0c8a4acbdbdd61e1047be1f0033deb3140d2ce0d093e9d8"
 metafile = true
 
 [[files]]
-file = "mods/avali_colonies_connector.pw.toml"
-hash = "3f52ca455687656525687b1208ba5b61cbd40823e3e6fff04ebe703284a20f07"
-metafile = true
-
-[[files]]
 file = "mods/blockui.pw.toml"
 hash = "2195b22648787aac875b1ea60c51cca57c1c0a4db4241ec52cd3ea2abfeaebf4"
 metafile = true
