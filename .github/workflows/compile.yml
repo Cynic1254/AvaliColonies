@@ -3,12 +3,14 @@ name: Shared Compilation Engine
 on:
   workflow_call:
     inputs:
-      build_theme:
+      project_path:
         required: true
-        type: boolean
-      build_connector:
+        type: string
+        description: "Relative path to the mod project folder (e.g., CustomMods/AvaliTheme)"
+      artifact_name:
         required: true
-        type: boolean
+        type: string
+        description: "The name of the stashed zip file artifact"
       release_tag:
         required: false
         type: string
@@ -32,34 +34,21 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      # Only inject the version if a tag is supplied
       - name: Inject Release Version
         if: ${{ inputs.release_tag != '' }}
         run: |
           chmod +x .github/scripts/update-version.sh
           .github/scripts/update-version.sh "${{ inputs.release_tag }}"
 
-      # Changes context straight into the theme folder to use its own local wrapper
-      - name: Build AvaliTheme Mod
-        if: ${{ inputs.build_theme }}
-        run: ./gradlew build
-        working-directory: CustomMods/AvaliTheme
+      - name: Build Mod Project
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+        working-directory: ${{ inputs.project_path }}
 
-      # Changes context straight into the connector folder to use its own local wrapper
-      - name: Build AvaliConnector Mod
-        if: ${{ inputs.build_connector }}
-        run: ./gradlew build
-        working-directory: CustomMods/AvaliConnector
-
-      - name: Upload AvaliTheme Artifact
-        if: ${{ inputs.build_theme }}
+      - name: Stash Built Elements
         uses: actions/upload-artifact@v4
         with:
-          name: avalitheme-latest
-          path: CustomMods/AvaliTheme/build/libs/*.jar
-
-      - name: Upload AvaliConnector Artifact
-        if: ${{ inputs.build_connector }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: avaliconnector-latest
-          path: CustomMods/AvaliConnector/build/libs/*.jar
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.project_path }}/build/libs/*.jar

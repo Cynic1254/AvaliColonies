@@ -8,90 +8,111 @@ on:
       - 'CustomMods/AvaliConnector/**'
       - 'CustomMods/gradle.properties'
 
-# Add pages permissions here so this workflow can deploy directly
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 jobs:
   evaluate-changes:
     runs-on: ubuntu-latest
     outputs:
-      theme: ${{ steps.check.outputs.theme }}
-      connector: ${{ steps.check.outputs.connector }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      run_build: ${{ steps.set-matrix.outputs.run_build }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
       
-      - id: check
+      # Generates a clean matrix configuration array based on the modified files
+      - id: set-matrix
         run: |
-          echo "theme=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliTheme/' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "connector=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliConnector/' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          THEME=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliTheme/' && echo 'true' || echo 'false')
+          CONNECTOR=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliConnector/' && echo 'true' || echo 'false')
+          
           if git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/gradle.properties'; then
-            echo "theme=true" >> $GITHUB_OUTPUT
-            echo "connector=true" >> $GITHUB_OUTPUT
+            THEME="true"
+            CONNECTOR="true"
           fi
 
+          # Construct JSON inclusion blocks dynamically
+          MATRIX_JSON="{\"include\":["
+          ADDED=false
+          
+          if [ "$THEME" = "true" ]; then
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"path\":\"CustomMods/AvaliTheme\",\"artifact\":\"avalitheme-latest\"}"
+            ADDED=true
+          fi
+          if [ "$CONNECTOR" = "true" ]; then
+            if [ "$ADDED" = true ]; then MATRIX_JSON="${MATRIX_JSON},"; fi
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avaliconnector\",\"path\":\"CustomMods/AvaliConnector\",\"artifact\":\"avaliconnector-latest\"}"
+            ADDED=true
+          fi
+          
+          MATRIX_JSON="${MATRIX_JSON}]}"
+          
+          echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
+          echo "run_build=${ADDED}" >> $GITHUB_OUTPUT
+
+  # This job executes the paths in parallel if changes are present
   run-compiler:
     needs: evaluate-changes
+    if: ${{ needs.evaluate-changes.outputs.run_build == 'true' }}
+    strategy:
+      matrix: ${{ fromJson(needs.evaluate-changes.outputs.matrix) }}
     uses: ./.github/workflows/compile.yml
     with:
-      build_theme: ${{ needs.evaluate-changes.outputs.theme == 'true' }}
-      build_connector: ${{ needs.evaluate-changes.outputs.connector == 'true' }}
+      project_path: ${{ matrix.path }}
+      artifact_name: ${{ matrix.artifact }}
 
   update-dev-packwiz:
     needs: [evaluate-changes, run-compiler]
+    if: ${{ always() && !cancelled() && !failed() }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout Code
+      - name: Checkout Code with LFS
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
-      # We need the compiled jars downloaded to this runner so Packwiz can read them
-      - name: Download Built Elements
+      # Download the theme artifact if it was built
+      - name: Download Theme Jar
+        if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avalitheme-latest') }}
         uses: actions/download-artifact@v4
         with:
-          name: compiled-jars
-          path: build-outputs
+          name: avalitheme-latest
+          path: build-outputs/theme
 
-      - name: Stage Jars and Update Packwiz
+      # Download the connector artifact if it was built
+      - name: Download Connector Jar
+        if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avaliconnector-latest') }}
+        uses: actions/download-artifact@v4
+        with:
+          name: avaliconnector-latest
+          path: build-outputs/connector
+
+      - name: Stage Jars into LFS Folder
         run: |
           chmod +x .github/scripts/update-packwiz-nightly.sh
           
-          # Move the actual files into the Modpack distribution tree
-          if [ "${{ needs.evaluate-changes.outputs.theme }}" == "true" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "build-outputs/CustomMods/AvaliTheme/build/libs"
+          if [ -d "build-outputs/theme" ]; then
+            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "build-outputs/theme"
           fi
-          if [ "${{ needs.evaluate-changes.outputs.connector }}" == "true" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "build-outputs/CustomMods/AvaliConnector/build/libs"
+          if [ -d "build-outputs/connector" ]; then
+            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "build-outputs/connector"
           fi
 
-      # Packwiz will now scan the local files, compute the exact hash, and update index.toml
-      - name: Refresh and Commit Meta Changes
+      - name: Refresh and Commit Meta & LFS Changes
         run: |
           cd Modpack
           chmod +x .bin/packwiz
-          
-          # If the mods weren't added to packwiz tracking yet, this automatically index keys them
-          # Otherwise, packwiz refresh handles updating the hashes perfectly
           ./.bin/packwiz refresh
           
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
           
-          # Track the metadata changes, but explicitly avoid committing the heavy jar files to Git!
-          git add mods/*.pw.toml index.toml pack.toml
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly packwiz hashes"
+          git add mods/*.pw.toml index.toml pack.toml jars/*.jar
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly packwiz hashes and LFS binaries"
           git push origin main
 
-      # --- Deploy the whole Modpack folder (including metadata and the nightly-jars) ---
-      - name: Prepare Pages Artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './Modpack'
-
-      - name: Push Live to Web Server
-        id: deployment
-        uses: actions/deploy-pages@v4
+  trigger-deployment:
+    needs: [update-dev-packwiz]
+    uses: ./.github/workflows/packwiz-deploy.yml

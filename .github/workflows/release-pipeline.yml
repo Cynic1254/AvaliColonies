@@ -7,10 +7,17 @@ on:
 
 jobs:
   compile-production:
+    strategy:
+      matrix:
+        include:
+          - path: "CustomMods/AvaliTheme"
+            artifact: "avalitheme-release"
+          - path: "CustomMods/AvaliConnector"
+            artifact: "avaliconnector-release"
     uses: ./.github/workflows/compile.yml
     with:
-      build_theme: true
-      build_connector: true
+      project_path: ${{ matrix.path }}
+      artifact_name: ${{ matrix.artifact }}
       release_tag: ${{ github.ref_name }}
 
   publish-release:
@@ -22,11 +29,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Download Stable Jars
+      - name: Download Theme Stable Jar
         uses: actions/download-artifact@v4
         with:
-          name: compiled-jars
-          path: release-artifacts
+          name: avalitheme-release
+          path: release-artifacts/theme
+
+      - name: Download Connector Stable Jar
+        uses: actions/download-artifact@v4
+        with:
+          name: avaliconnector-release
+          path: release-artifacts/connector
 
       - name: Organize Artifacts
         run: |
