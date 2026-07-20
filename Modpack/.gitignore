@@ -1,4 +1,4 @@
 # Ignore actual temporary/downloaded mod jar files if you run testing client runs here
 *.jar
 # jars in this file should specifically be added
-!jars/*.jar
+!.bin/*.jar
