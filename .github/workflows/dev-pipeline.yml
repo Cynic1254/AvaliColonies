@@ -57,15 +57,22 @@ jobs:
       project_path: ${{ matrix.path }}
       artifact_name: ${{ matrix.artifact }}
 
-  update-dev-packwiz:
+  update-and-deploy:
     needs: [evaluate-changes, run-compiler]
     if: ${{ always() && !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Download Theme Jar
         if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avalitheme-latest') }}
@@ -81,6 +88,7 @@ jobs:
           name: avaliconnector-latest
           path: build-outputs/connector
 
+      # 1, 2, 3: Generate the files locally
       - name: Generate Meta & Stage Binaries
         run: |
           chmod +x .github/scripts/generate-toml.sh
@@ -92,13 +100,26 @@ jobs:
             ./.github/scripts/generate-toml.sh "avaliconnector" "Avali Colonies Connector" "build-outputs/connector"
           fi
 
+      # 4: Refresh packwiz index locally
       - name: Refresh Packwiz Index
         run: |
           cd Modpack
           chmod +x .bin/packwiz
           ./.bin/packwiz refresh
 
-      - name: Commit and Push Changes
+      # 5: Create the Pages deployment bundle straight from the current workspace
+      - name: Prepare Pages Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './Modpack'
+
+      # 6: Push live to the web server immediately
+      - name: Push Live to Web Server
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # 7: Commit and push tracking metadata back to the repository histories safely
+      - name: Commit and Push Tracked Changes
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
@@ -106,11 +127,3 @@ jobs:
           git add Modpack/mods/*.toml Modpack/.bin/*.jar Modpack/index.toml Modpack/pack.toml
           git diff --quiet && git diff --staged --quiet || git commit -m "chore: automated packwiz refresh and binary staging"
           git push origin main
-
-  trigger-deployment:
-    needs: [update-dev-packwiz]
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/packwiz-deploy.yml
