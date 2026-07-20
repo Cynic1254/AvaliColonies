@@ -1,6 +1,14 @@
 hash-format = "sha256"
 
 [[files]]
+file = "jars/avaliconnector-1.0.0.jar"
+hash = "dc01659d4e8c24ab5d2aa3059240962cf3bb8514a6b5058c65fd75472f72731c"
+
+[[files]]
+file = "jars/avalitheme-1.0.0.jar"
+hash = "2e9774dccd179ec3e2b6f07e6fde08b2b65b2ed2786cc79c9e4572651573b06c"
+
+[[files]]
 file = "mods/ad-astra.pw.toml"
 hash = "da42d2a6e6e3f7bd10df625ab23d6ba8a50ecb3545c1c3c6bda4f826caa5d51b"
 metafile = true
