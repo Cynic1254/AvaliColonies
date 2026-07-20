@@ -1,12 +1,12 @@
 hash-format = "sha256"
 
 [[files]]
-file = "jars/avaliconnector-1.0.0.jar"
-hash = "dc01659d4e8c24ab5d2aa3059240962cf3bb8514a6b5058c65fd75472f72731c"
+file = ".bin/avaliconnector-1.0.0.jar"
+hash = "bc8997fa0af8357bbcea8fc4c1e1158a4d0b0ef44d81ae88bacfee65f5003820"
 
 [[files]]
-file = "jars/avalitheme-1.0.0.jar"
-hash = "2e9774dccd179ec3e2b6f07e6fde08b2b65b2ed2786cc79c9e4572651573b06c"
+file = ".bin/avalitheme-1.0.0.jar"
+hash = "f79daca63a03ea0ce7cdc70281b4e2ecf28574909cbf873024ddf7b1905c32aa"
 
 [[files]]
 file = "mods/ad-astra.pw.toml"
@@ -16,6 +16,16 @@ metafile = true
 [[files]]
 file = "mods/architectury-api.pw.toml"
 hash = "5e9edd1fd2395f14a0c8a4acbdbdd61e1047be1f0033deb3140d2ce0d093e9d8"
+metafile = true
+
+[[files]]
+file = "mods/avaliconnector.pw.toml"
+hash = "e1706c7c8d50e154e71155b75383f3744ccf5680c511c7b5293fb57265f5283b"
+metafile = true
+
+[[files]]
+file = "mods/avalitheme.pw.toml"
+hash = "4ffb03fefdfaecb5d9c8b6c42e446749bbe617e7578a40c4aca645be26c5f025"
 metafile = true
 
 [[files]]

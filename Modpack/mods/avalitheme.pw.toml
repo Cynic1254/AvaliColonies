@@ -1,0 +1,8 @@
+name = "Avali Theme"
+filename = "avalitheme-1.0.0.jar"
+side = "both"
+
+[download]
+url = ".bin/avalitheme-1.0.0.jar"
+hash-format = "sha256"
+hash = "f79daca63a03ea0ce7cdc70281b4e2ecf28574909cbf873024ddf7b1905c32aa"
