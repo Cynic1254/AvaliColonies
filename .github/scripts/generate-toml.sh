@@ -7,8 +7,8 @@ BIN_DIR="Modpack/.bin"
 MODS_DIR="Modpack/mods"
 mkdir -p "$BIN_DIR"
 
-# Locate the production jar
-JAR_FILE=$(find "$JAR_SOURCE_DIR" -maxdepth 1 -name "*.jar" ! -name "*-sources.jar" ! -name "*-dev.jar" ! -name "*-api.jar" | head -n 1)
+# Locate the production jar recursively through any downloaded artifact subdirectories
+JAR_FILE=$(find "$JAR_SOURCE_DIR" -type f -name "*.jar" ! -name "*-sources.jar" ! -name "*-dev.jar" ! -name "*-api.jar" | head -n 1)
 
 if [ -z "$JAR_FILE" ]; then
   echo "Error: Could not locate a valid production .jar in $JAR_SOURCE_DIR"
@@ -21,16 +21,19 @@ HASH=$(sha256sum "$JAR_FILE" | awk '{print $1}')
 # Copy the binary straight into the ignored .bin folder
 cp "$JAR_FILE" "$BIN_DIR/$FILENAME"
 
-# Generate the explicit .pw.toml format pointing to the ignored folder
+# Dynamically construct the absolute GitHub Pages link using default environment variables
+PAGES_URL="https://${GITHUB_REPOSITORY%%/*}.github.io/${GITHUB_REPOSITORY#*/}/.bin/$FILENAME"
+
+# Generate the explicit .pw.toml format pointing to the public URL
 cat <<EOF > "$MODS_DIR/${MOD_ID}.pw.toml"
 name = "$MOD_NAME"
 filename = "$FILENAME"
 side = "both"
 
 [download]
-url = ".bin/$FILENAME"
+url = "$PAGES_URL"
 hash-format = "sha256"
 hash = "$HASH"
 EOF
 
-echo "Successfully generated $MODS_DIR/${MOD_ID}.pw.toml and staged binary in .bin/."
+echo "Successfully generated $MODS_DIR/${MOD_ID}.pw.toml with absolute URL: $PAGES_URL"
