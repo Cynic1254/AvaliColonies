@@ -3,6 +3,6 @@ filename = "avalitheme-1.0.0.jar"
 side = "both"
 
 [download]
-url = ".bin/avalitheme-1.0.0.jar"
+url = "https://Cynic1254.github.io/AvaliColonies/.bin/avalitheme-1.0.0.jar"
 hash-format = "sha256"
-hash = "c49f515dba48f251b603a73a4879f50ad2459fa2db1e878fdccd87dd178ebb27"
+hash = "e6fc0b4985e4ca7c41c4b88f7f2828331024b1e3762b6be9f37f460dc6f04f52"

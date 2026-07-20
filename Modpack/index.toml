@@ -12,12 +12,12 @@ metafile = true
 
 [[files]]
 file = "mods/avaliconnector.pw.toml"
-hash = "11f512162cf0916e92e02c53243b9b7608e52e6acefd01c4e620cd28021bb37f"
+hash = "87caa576ae81a78ee9379d9fd6109945873ae0a04f8b4971a120e104901f668c"
 metafile = true
 
 [[files]]
 file = "mods/avalitheme.pw.toml"
-hash = "b97c09de098e9da2d9dd71cbf95227caaa173bd648c1b09f623c700c43b7458a"
+hash = "15bfb864971a0393bfa43a620b1cfa785facea961e94ca9d0e6445da3f7707c0"
 metafile = true
 
 [[files]]
