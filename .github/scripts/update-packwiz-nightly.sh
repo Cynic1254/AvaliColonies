@@ -1,28 +1,20 @@
 #!/bin/bash
 MOD_ID=$1
-ARTIFACT_NAME=$2
+JAR_SOURCE_DIR=$2
 
-if [ -z "$MOD_ID" ] || [ -z "$ARTIFACT_NAME" ]; then
-  echo "Usage: ./update-packwiz-nightly.sh <mod_id> <artifact_name>"
+if [ -z "$MOD_ID" ] || [ -z "$JAR_SOURCE_DIR" ]; then
+  echo "Usage: ./update-packwiz-nightly.sh <mod_id> <jar_source_dir>"
   exit 1
 fi
 
-# Format the dynamic nightly download zip URL framework
-REPO_URL="https://nightly.link/${GITHUB_REPOSITORY}/artifacts/${ARTIFACT_NAME}.zip"
+# Create a dedicated directory inside Modpack to serve the binary files via Pages
+TARGET_DIR="Modpack/nightly-jars"
+mkdir -p "$TARGET_DIR"
 
-# Move execution context directly into the Modpack workspace directory
-cd Modpack
+# Clean out old nightly iterations of this specific mod to keep the folder clean
+rm -f "$TARGET_DIR"/"$MOD_ID"*.jar
 
-# Safely check execution path permissions for your pre-compiled binaries
-chmod +x .bin/packwiz
+# Copy the fresh compiled jar from the build output directory
+cp "$JAR_SOURCE_DIR"/*.jar "$TARGET_DIR"/
 
-# Remove tracking metadata to guarantee an explicit programmatic rewrite
-if [ -f "mods/${MOD_ID}.pw.toml" ]; then
-  echo "Purging old tracking schema for ${MOD_ID}..."
-  rm -f "mods/${MOD_ID}.pw.toml"
-fi
-
-# Natively add via external URL link using your local bin executable
-./.bin/packwiz url add "$MOD_ID" "$REPO_URL"
-
-echo "Packwiz tracker successfully established for $MOD_ID."
+echo "Successfully staged $MOD_ID binary into local Modpack hosting tree."

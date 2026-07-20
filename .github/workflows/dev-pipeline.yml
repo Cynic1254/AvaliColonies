@@ -49,31 +49,44 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Update Packwiz Metadata Pointers
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
+      # We need the compiled jars downloaded to this runner so Packwiz can read them
+      - name: Download Built Elements
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-jars
+          path: build-outputs
+
+      - name: Stage Jars and Update Packwiz
         run: |
           chmod +x .github/scripts/update-packwiz-nightly.sh
           
+          # Move the actual files into the Modpack distribution tree
           if [ "${{ needs.evaluate-changes.outputs.theme }}" == "true" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "avalitheme-latest"
+            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "build-outputs/CustomMods/AvaliTheme/build/libs"
           fi
           if [ "${{ needs.evaluate-changes.outputs.connector }}" == "true" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "avaliconnector-latest"
+            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "build-outputs/CustomMods/AvaliConnector/build/libs"
           fi
 
+      # Packwiz will now scan the local files, compute the exact hash, and update index.toml
       - name: Refresh and Commit Meta Changes
         run: |
           cd Modpack
           chmod +x .bin/packwiz
+          
+          # If the mods weren't added to packwiz tracking yet, this automatically index keys them
+          # Otherwise, packwiz refresh handles updating the hashes perfectly
           ./.bin/packwiz refresh
           
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
+          
+          # Track the metadata changes, but explicitly avoid committing the heavy jar files to Git!
           git add mods/*.pw.toml index.toml pack.toml
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly metadata pointers"
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly packwiz hashes"
           git push origin main
 
+      # --- Deploy the whole Modpack folder (including metadata and the nightly-jars) ---
       - name: Prepare Pages Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
