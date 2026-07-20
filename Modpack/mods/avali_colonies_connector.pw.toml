@@ -1,0 +1,8 @@
+name = "Avali Colonies Connector"
+filename = "avali_colonies_connector-1.0.0.jar"
+side = "both"
+
+[download]
+url = "https://github.com/Cynic1254/Avali-Colonies-Connector/releases/download/v0.0.3/avali_colonies_connector-1.0.0.jar"
+hash-format = "sha256"
+hash = "d6c6fd7389e9fb7bb9aa9eafe13d8f5bdc990e620beaeca604c2213cb8a6009b"

@@ -1,0 +1,44 @@
+name: Packwiz Deployment Server
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'Modpack/**'
+      # Ignore the native workspace binary tools from triggering a loop cycle
+      - '!Modpack/.bin/**' 
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-hosting"
+  cancel-in-progress: true
+
+jobs:
+  host-distribution:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify and Re-index Hashes via Local Bin
+        run: |
+          cd Modpack
+          chmod +x .bin/packwiz
+          ./.bin/packwiz refresh
+
+      - name: Prepare Pages Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Serves exclusively the contents of the Modpack folder
+          path: './Modpack'
+
+      - name: Push Live to Web Server
+        id: deployment
+        uses: actions/deploy-pages@v4

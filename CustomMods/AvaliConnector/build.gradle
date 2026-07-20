@@ -1,0 +1,154 @@
+buildscript {
+    repositories {
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+// 1. Map the properties that have dots in their names using findProperty()
+def local_mod_id = findProperty('connector.mod_id')
+def local_mod_name = findProperty('connector.mod_name')
+def local_mod_version = findProperty('connector.mod_version')
+def local_mod_authors = findProperty('connector.mod_authors')
+def local_mod_description = findProperty('connector.mod_description')
+
+// 2. mod_group_id has no dots, so project scope handles it automatically!
+group = mod_group_id
+version = local_mod_version
+
+base {
+    archivesName = local_mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${local_mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', local_mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', local_mod_id
+            args '--nogui'
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', local_mod_id
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', local_mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "${local_mod_id}.refmap.json"
+    config "${local_mod_id}.mixins.json"
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven {
+        name = "CurseMaven"
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // --- Dynamic Local AvaliTheme Build Dependency ---
+    implementation "${findProperty('mod_group_id')}:${findProperty('avalitheme.mod_id')}:${findProperty('avalitheme.mod_version')}"
+
+    // --- MineColonies Stack ---
+    implementation fg.deobf("curse.maven:minecolonies-245506:8138329")
+    implementation fg.deobf("curse.maven:blockui-522992:7541343")
+    implementation fg.deobf("curse.maven:domum-ornamentum-527361:7585567")
+    implementation fg.deobf("curse.maven:multi-piston-303278:5204918")
+    implementation fg.deobf("curse.maven:structurize-298744:8138301")
+    implementation fg.deobf("curse.maven:towntalk-900364:5355511")
+
+    // --- Ad Astra Stack ---
+    implementation fg.deobf("curse.maven:ad-astra-635042:6262032")
+    implementation fg.deobf("curse.maven:botarium-704113:5486070")
+    implementation fg.deobf("curse.maven:resourceful-config-714059:6231176")
+    implementation fg.deobf("curse.maven:resourceful-lib-570073:5659871")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : local_mod_id,
+            mod_name               : local_mod_name,
+            mod_license            : mod_license,
+            mod_version            : local_mod_version,
+            mod_authors            : local_mod_authors,
+            mod_description        : local_mod_description,
+            avalitheme_version     : findProperty('avalitheme.mod_version') ?: '1.0.0'
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                "Specification-Title"     : local_mod_id,
+                "Specification-Vendor"    : local_mod_authors,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : local_mod_authors,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

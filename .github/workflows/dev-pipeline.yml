@@ -1,0 +1,84 @@
+name: Core Dev Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'CustomMods/AvaliTheme/**'
+      - 'CustomMods/AvaliConnector/**'
+      - 'CustomMods/gradle.properties'
+
+# Add pages permissions here so this workflow can deploy directly
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  evaluate-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      theme: ${{ steps.check.outputs.theme }}
+      connector: ${{ steps.check.outputs.connector }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - id: check
+        run: |
+          echo "theme=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliTheme/' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "connector=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliConnector/' && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          if git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/gradle.properties'; then
+            echo "theme=true" >> $GITHUB_OUTPUT
+            echo "connector=true" >> $GITHUB_OUTPUT
+          fi
+
+  run-compiler:
+    needs: evaluate-changes
+    uses: ./.github/workflows/compile.yml
+    with:
+      build_theme: ${{ needs.evaluate-changes.outputs.theme == 'true' }}
+      build_connector: ${{ needs.evaluate-changes.outputs.connector == 'true' }}
+
+  update-dev-packwiz:
+    needs: [evaluate-changes, run-compiler]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Update Packwiz Metadata Pointers
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          chmod +x .github/scripts/update-packwiz-nightly.sh
+          
+          if [ "${{ needs.evaluate-changes.outputs.theme }}" == "true" ]; then
+            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "avalitheme-latest"
+          fi
+          if [ "${{ needs.evaluate-changes.outputs.connector }}" == "true" ]; then
+            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "avaliconnector-latest"
+          fi
+
+      - name: Refresh and Commit Meta Changes
+        run: |
+          cd Modpack
+          chmod +x .bin/packwiz
+          ./.bin/packwiz refresh
+          
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add mods/*.pw.toml index.toml pack.toml
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly metadata pointers"
+          git push origin main
+
+      - name: Prepare Pages Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './Modpack'
+
+      - name: Push Live to Web Server
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}
+
+// Inject properties directly into the Project scope before evaluation
+gradle.beforeProject { project ->
+    def sharedPropertiesFile = new File(settingsDir, '../gradle.properties')
+    if (sharedPropertiesFile.exists()) {
+        def props = new Properties()
+        sharedPropertiesFile.withInputStream { props.load(it) }
+        props.each { key, value ->
+            project.ext.set(key as String, value)
+        }
+    }
+}
+
+rootProject.name = 'avaliconnector'
+
+includeBuild('../AvaliTheme')

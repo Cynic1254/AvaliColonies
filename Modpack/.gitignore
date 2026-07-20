@@ -1,0 +1,2 @@
+# Ignore actual temporary/downloaded mod jar files if you run testing client runs here
+*.jar

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-690051097/AvaliTheme.main.iml" filepath="$PROJECT_DIR$/.idea/modules/-690051097/AvaliTheme.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-690051097/AvaliTheme.test.iml" filepath="$PROJECT_DIR$/.idea/modules/-690051097/AvaliTheme.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/avaliconnector.iml" filepath="$PROJECT_DIR$/.idea/modules/avaliconnector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/avaliconnector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/avaliconnector.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/avaliconnector.test.iml" filepath="$PROJECT_DIR$/.idea/modules/avaliconnector.test.iml" />
+    </modules>
+  </component>
+</project>

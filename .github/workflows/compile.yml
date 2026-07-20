@@ -1,0 +1,58 @@
+name: Shared Compilation Engine
+
+on:
+  workflow_call:
+    inputs:
+      build_theme:
+        required: true
+        type: boolean
+      build_connector:
+        required: true
+        type: boolean
+      release_tag:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  execute-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Inject Release Version
+        if: ${{ inputs.release_tag != '' }}
+        run: |
+          chmod +x .github/scripts/update-version.sh
+          .github/scripts/update-version.sh "${{ inputs.release_tag }}"
+
+      # Executing from the CustomMods workspace subdirectory context
+      - name: Build AvaliTheme Mod
+        if: ${{ inputs.build_theme }}
+        run: ./gradlew :AvaliTheme:build
+        working-directory: CustomMods
+
+      - name: Build AvaliConnector Mod
+        if: ${{ inputs.build_connector }}
+        run: ./gradlew :AvaliConnector:build
+        working-directory: CustomMods
+
+      - name: Stash Built Elements
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-jars
+          path: |
+            CustomMods/AvaliTheme/build/libs/*.jar
+            CustomMods/AvaliConnector/build/libs/*.jar
