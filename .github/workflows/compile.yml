@@ -34,7 +34,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Only inject the version if a tag is supplied
       - name: Inject Release Version
         if: ${{ inputs.release_tag != '' }}
         run: |

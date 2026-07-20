@@ -1,9 +1,7 @@
 name: Packwiz Deployment Server
 
 on:
-  # Allows it to be called by other workflows
   workflow_call:
-  # Keeps it working for direct changes to Modpack/
   push:
     branches: [ "main" ]
     paths:
@@ -15,16 +13,21 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages-hosting"
+  cancel-in-progress: true
+
 jobs:
   host-distribution:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          lfs: true
 
-      - name: Verify and Re-index Hashes via Local Bin
+      - name: Re-index General Modpack Files
         run: |
           cd Modpack
           chmod +x .bin/packwiz

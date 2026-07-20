@@ -20,7 +20,6 @@ jobs:
         with:
           fetch-depth: 2
       
-      # Generates a clean matrix configuration array based on the modified files
       - id: set-matrix
         run: |
           THEME=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliTheme/' && echo 'true' || echo 'false')
@@ -31,7 +30,6 @@ jobs:
             CONNECTOR="true"
           fi
 
-          # Construct JSON inclusion blocks dynamically
           MATRIX_JSON="{\"include\":["
           ADDED=false
           
@@ -46,11 +44,9 @@ jobs:
           fi
           
           MATRIX_JSON="${MATRIX_JSON}]}"
-          
           echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
           echo "run_build=${ADDED}" >> $GITHUB_OUTPUT
 
-  # This job executes the paths in parallel if changes are present
   run-compiler:
     needs: evaluate-changes
     if: ${{ needs.evaluate-changes.outputs.run_build == 'true' }}
@@ -68,12 +64,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout Code with LFS
+      - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          lfs: true
 
-      # Download the theme artifact if it was built
       - name: Download Theme Jar
         if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avalitheme-latest') }}
         uses: actions/download-artifact@v4
@@ -81,7 +74,6 @@ jobs:
           name: avalitheme-latest
           path: build-outputs/theme
 
-      # Download the connector artifact if it was built
       - name: Download Connector Jar
         if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avaliconnector-latest') }}
         uses: actions/download-artifact@v4
@@ -89,28 +81,30 @@ jobs:
           name: avaliconnector-latest
           path: build-outputs/connector
 
-      - name: Stage Jars into LFS Folder
+      - name: Generate Meta & Stage Binaries
         run: |
-          chmod +x .github/scripts/update-packwiz-nightly.sh
+          chmod +x .github/scripts/generate-toml.sh
           
           if [ -d "build-outputs/theme" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avalitheme" "build-outputs/theme"
+            ./.github/scripts/generate-toml.sh "avalitheme" "Avali Theme" "build-outputs/theme"
           fi
           if [ -d "build-outputs/connector" ]; then
-            ./.github/scripts/update-packwiz-nightly.sh "avaliconnector" "build-outputs/connector"
+            ./.github/scripts/generate-toml.sh "avaliconnector" "Avali Colonies Connector" "build-outputs/connector"
           fi
 
-      - name: Refresh and Commit Meta & LFS Changes
+      - name: Refresh Packwiz Index
         run: |
           cd Modpack
           chmod +x .bin/packwiz
           ./.bin/packwiz refresh
-          
+
+      - name: Commit and Push Changes
+        run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
           
-          git add mods/*.pw.toml index.toml pack.toml jars/*.jar
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update nightly packwiz hashes and LFS binaries"
+          git add Modpack/mods/*.toml Modpack/.bin/*.jar Modpack/index.toml Modpack/pack.toml
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: automated packwiz refresh and binary staging"
           git push origin main
 
   trigger-deployment:
