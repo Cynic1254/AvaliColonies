@@ -12,7 +12,7 @@ metafile = true
 
 [[files]]
 file = "mods/avali_colonies_connector.pw.toml"
-hash = "8ea7cab96126ce811a94ee357b01254928d4009187f3040b9245ad44087c57c6"
+hash = "3f52ca455687656525687b1208ba5b61cbd40823e3e6fff04ebe703284a20f07"
 metafile = true
 
 [[files]]
@@ -66,11 +66,6 @@ hash = "ef0264b7d819848f72ab2f34643306187e712965a8246e1f733e1bd39d8fd681"
 metafile = true
 
 [[files]]
-file = "mods/roughly-enough-items-hacks.pw.toml"
-hash = "7a39d6d8faddf9ac5f10aa1b3c271b8dc27b1f79531bdbeefb8d268b68e9eef5"
-metafile = true
-
-[[files]]
 file = "mods/roughly-enough-items.pw.toml"
 hash = "e38945b50b973d994c16480820661aada73212ed7e60fafdbf17b0e7f6740378"
 metafile = true
@@ -78,11 +73,6 @@ metafile = true
 [[files]]
 file = "mods/structurize.pw.toml"
 hash = "f3e28999ec3aa4973621ebd2ba2bf7f1af0a50f950ffe545444c7ebad54c5921"
-metafile = true
-
-[[files]]
-file = "mods/the-one-probe.pw.toml"
-hash = "97063e6b0b10ed95e42c1d4954ab577f8d6e94a79c0a8a93206b35475dce1460"
 metafile = true
 
 [[files]]
