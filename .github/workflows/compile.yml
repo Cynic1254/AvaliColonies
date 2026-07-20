@@ -38,16 +38,17 @@ jobs:
           chmod +x .github/scripts/update-version.sh
           .github/scripts/update-version.sh "${{ inputs.release_tag }}"
 
-      # Executing from the CustomMods workspace subdirectory context
+      # Changes context straight into the theme folder to use its own local wrapper
       - name: Build AvaliTheme Mod
         if: ${{ inputs.build_theme }}
-        run: ./gradlew :AvaliTheme:build
-        working-directory: CustomMods
+        run: ./gradlew build
+        working-directory: CustomMods/AvaliTheme
 
+      # Changes context straight into the connector folder to use its own local wrapper
       - name: Build AvaliConnector Mod
         if: ${{ inputs.build_connector }}
-        run: ./gradlew :AvaliConnector:build
-        working-directory: CustomMods
+        run: ./gradlew build
+        working-directory: CustomMods/AvaliConnector
 
       - name: Stash Built Elements
         uses: actions/upload-artifact@v4
