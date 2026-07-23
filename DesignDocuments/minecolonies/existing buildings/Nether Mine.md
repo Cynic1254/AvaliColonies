@@ -1,16 +1,30 @@
 ### Function
-The Nether Mine is where the Nether Miner works. The Nether Miner travels into The Nether and mines resources found there.
-The nether miner can also craft lava buckets
+Sends a worker on periodic expeditions into the Nether through a portal built into the building's own schematic, returning with a random haul of Nether materials. Uses the `.Custom` crafting policy — see **[_Shared - Crafting System](_Shared%20-%20Crafting%20System.md)**.
+
+- Building: [`BuildingNetherWorker`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/buildings/workerbuildings/BuildingNetherWorker.java)
+- AI: [`EntityAIWorkNether`](../../../minecolonies/src/main/java/com/minecolonies/core/entity/ai/workers/production/EntityAIWorkNether.java)
+- Crafting module: `BuildingNetherWorker.CraftingModule extends AbstractCraftingBuildingModule.Custom`
+- Expedition log module: `ExpeditionLogModule` (`NETHERWORKER_EXPEDITION` in `BuildingModules`, tied to `ResearchConstants.NETHER_LOG`) — keeps a record of trips for the player to review
+- Datapack sources: `crafterrecipes/netherworker/*.json` (`lava.json` + `trip1`–`trip5.json`)
+
 ### Levels
-1. Gathers: blaze rod, ender pearl, ghast tear, gold ingot, gold nugget, gravel, gunpowder, leather, magma cream, nether quartz ore, netherrack, porkchop, rotten flesh, soul sand, soul_soil.
-2. Gathers: All items from previous levels, plus brown mushroom, crimson fungus, crimson nylium, crimson stem, glowstone, nether wart, red mushroom.
-3. Gathers: All items from previous levels, plus basalt, warped fungus, warped nylium, warped_stem.
-4. Gathers: All items from previous levels, plus blackstone, nether gold ore.
-5. Gathers: All items from previous levels, plus ancient debris.
+Max building level: 5. No recipe-slot cap in the usual sense — eligibility is entirely the tiered `tripN` custom recipes (`min-building-level == max-building-level == N`, same "exact tier" pattern as the Enchanter's tomes), each pointing at its own `netherworker/tripN` loot table for the actual haul.
+
 ### Research
-You have to have the `Open the nether` research to build this
+The Nether Mine itself is gated behind research: [`opennether.json`](../../../minecolonies/src/datagen/generated/minecolonies/data/minecolonies/researches/technology/opennether.json) ("Open the Nether") costs 3 Gilded Blackstone, chains off "More Scrolls" (see the Enchanter doc — note this makes the Nether Mine's unlock chain run *through* the Enchanter's progression rather than any nether/mining building), has no additional building-level requirement of its own, and its effect (`blockhutnetherworker`) unlocks the Nether Mine for placement. It is in turn the parent of the Alchemist's own unlock research. Separately, trip frequency (`MAX_PER_PERIOD`/`PERIOD_DAYS`) is noted in code as "potentially modified by research" — but checking [`BuildingNetherWorker`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/buildings/workerbuildings/BuildingNetherWorker.java) directly shows `getMaxPerPeriod()`/`getPeriodDays()` are plain static methods that just return the hardcoded constants (1 trip per 3 days) with no research lookup inside — the comment appears to describe a planned hook that isn't actually wired up to any research effect in this codebase yet, rather than an existing mechanic this reference simply hasn't found.
+
 ### Skills
-- primary: Adaptability
+- Primary: Adaptability
 - Secondary: Strength
+- Crafting speed skill: Adaptability, Recipe improvement skill: Strength (no swap)
+
+(`NETHERWORKER_WORK` in [`BuildingModules`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/buildings/modules/BuildingModules.java).)
+
 ### Limits
-The portal in the Nether Mine will transport players to the Nether. However, the Nether Miner does not actually travel into the Nether, nor do they actually mine any blocks in the Nether.
+- **A trip consumes real building materials, not just abstract "effort"**: every tier (`trip1`–`trip5.json`) requires the same fixed cost — 64 Cobblestone + 32 Torches + 16 Ladders — regardless of level; only the loot table's richness scales with tier, not the cost. Confirmed tier progression: tier 1 is the base list (netherrack, nether quartz ore, rotten flesh, gold nugget, soul sand/soil, gravel, porkchop, leather, gunpowder, ghast tear, ender pearl, magma cream); tier 2 adds mushrooms, glowstone, nether wart, and the Crimson set (nylium/fungus/stem); tier 3 adds Basalt, the Warped set, and all three Froglight colors; tier 4 adds Nether Gold Ore and Blackstone; tier 5 adds Ancient Debris on top of everything else. Each tier's recipe is both `min-` and `max-building-level` locked to its own level (e.g. `trip3.json` is `min-building-level: 3, max-building-level: 3`), so a given trip always uses exactly the loot table matching the Nether Mine's current level, not a cumulative unlock. The actual haul is a real loot-table roll (`minecolonies:recipes/netherworker/tripN`), not a fixed guaranteed set.
+- **Trip frequency is a hard, day-tracked cooldown, Building code**: `MAX_PER_PERIOD = 1` trip per `PERIOD_DAYS = 3` days by default. Both are exposed as static getters commented as "potentially modified by research," but checking `BuildingNetherWorker` directly shows they just return the hardcoded constants with no research lookup inside — this looks like a planned hook that was never wired up to an actual research effect, not a mechanic this reference failed to find. `onWakeUp()` advances the period-day counter and resets `currentTrips` back to 0 once the period elapses; `isReadyForTrip()` also self-corrects the day count if the world's day/night cycle isn't running (e.g. `doDaylightCycle` off), so the cooldown doesn't silently stall forever in that case.
+- **The portal location is schematic-defined**: `getPortalLocation()` reads a `portal`-tagged block from the building's own blueprint (returning the position *above* the tag) — a blueprint without a `portal` tag gives the worker nowhere to actually travel through, independent of the trip cooldown or recipe gating.
+- **Self-destructing safeguard**: if a Nether Worker building is ever placed while the colony's world *is* the Nether (`WorldUtil.isNetherType`), `onPlacement()` immediately destroys the placed block — this building is meant to launch trips *from* the overworld (or wherever the colony is) *into* the Nether via its own portal, not to be built inside the Nether itself.
+- **Optional portal closing**: the `CLOSE_PORTAL` bool setting (default not confirmed) controls `shallClosePortalOnReturn()` — whether the worker closes the portal behind it after returning.
+- **Reserved inventory** (`keepX`): one each of axe/pickaxe/shovel/sword (any tier), one Flint and Steel, and one each of head/chest/leg/foot armor — a full survival loadout kept on hand for the expedition, distinct from the trip's material-cost inputs.
+- `lava.json` is a simple, ungated custom recipe: 1 empty Bucket → 1 Lava Bucket (presumably filled from Nether lava encountered during the trip).

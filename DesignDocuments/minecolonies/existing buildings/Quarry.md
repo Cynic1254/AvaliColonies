@@ -1,15 +1,26 @@
 ### Function
-The Quarry is where you can hire a Quarrier to dig the Quarry . The Quarry will be a pit of varied size (simple is 1 x 1 chunks, medium is 2 x 2) to collect larger amounts of stone type blocks. The Quarry will only produce the blocks it digs out. It will not produce additional ore blocks like the Mine.
+A pit dug out to collect large amounts of stone-family blocks, worked by a Quarrier who was originally hired at a [Mine](Mine.md) — see **[_Shared - Structure Building System](_Shared%20-%20Structure%20Building%20System.md)** for that hiring relationship. **Unlike every other building documented in this reference, the Quarry has no dedicated Java building class at all** — both the Simple and Medium tiers are registered as plain [`DefaultBuildingInstance`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/buildings/DefaultBuildingInstance.java)s carrying a single [`QuarryModule`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/buildings/modules/QuarryModule.java) each. Don't spend time looking for a `BuildingQuarry.java` — it doesn't exist.
+
+- Registration (confirmed in [`ModBuildingsInitializer`](../../../minecolonies/src/main/java/com/minecolonies/apiimp/initializer/ModBuildingsInitializer.java)):
+  - Simple Quarry: `new DefaultBuildingInstance(colony, blockPos, "simplequarry", 1)` + `SIMPLE_QUARRY` module (`new QuarryModule(32)`)
+  - Medium Quarry: `new DefaultBuildingInstance(colony, blockPos, "mediumquarry", 1)` + `MEDIUM_QUARRY` module (`new QuarryModule(64)`)
+  - A "Large Quarry" tier exists **commented out** in source (`ModBuildings.LARGE_QUARRY_ID`, a `largequarry` schematic) — planned but not currently implemented/registered.
+- Job: `quarrier` — [`JobQuarrier`](../../../minecolonies/src/main/java/com/minecolonies/core/colony/jobs/JobQuarrier.java) (formally employed at the Mine, see shared doc)
+- AI: [`EntityAIQuarrier`](../../../minecolonies/src/main/java/com/minecolonies/core/entity/ai/workers/production/EntityAIQuarrier.java) — extends `AbstractEntityAIStructureWithWorkOrder`, the same base as the Builder (see the structure-building shared doc); digging is implemented as clearing a pre-made "shaft" blueprint layer by layer, not a bespoke mining algorithm.
+
 ### Levels
-1. 
-2. 
-3. 
-4. 
-5. 
+Both quarry tiers are registered with a hardcoded max building level of **1** — there is no multi-level Quarry the way there is for almost every other building in this reference. "Simple" vs. "Medium" is a difference of *which building you place*, not a level you upgrade into.
+- The `QuarryModule` constructor takes a `height` parameter (32 for Simple, 64 for Medium) used only for `getAdditionalCorners()` — extending the building's claimed footprint vertically from `(0, height, 0)` down to `(0, 0, 0)`. This governs the colony's claimed-chunk vertical bounds for the pit, not necessarily the exact dig depth.
+- The *horizontal* footprint difference — Simple is 1×1 chunks, Medium is 2×2 — is a schematic-authoring fact (the blueprint's own width), not something visible in the `QuarryModule` code itself.
+
 ### Research
+No building-unlock research exists for either quarry tier — confirmed by the absence of any research file referencing `simplequarry`/`mediumquarry` as an unlock target, and consistent with how the building is generally known to work. This does make the Quarry a genuine exception to the pattern seen on most other non-starter buildings in this reference (which are all research-gated), but that's simply a fact about this building rather than a sign of an incomplete search — the Quarry blocks are presumably obtained or placed by some other means (e.g. a specific item or direct placement) rather than unlocked through the research tree.
 
 ### Skills
-- primary: Strength
-- Secondary: Stamina
+Primary Strength, Secondary Stamina — same as the Mine, since the Quarrier is hired via the Mine's `QUARRIER_WORK` module and works the Quarry as an external work station rather than having a separate skill assignment of its own.
+
 ### Limits
-The Quarrier must be hired by a mine before it can be hired by the Quarry
+- **A Quarry doesn't hire — it adopts**: see the shared doc's step-by-step description of `QuarryModule.onColonyTick()` scanning for an already-hired, not-yet-placed Quarrier. `getModuleMax()` is hardcoded to **1** — a Quarry building can only ever have one Quarrier working it, matching the Mine's own single-worker-total cap.
+- **Reassignment resets dig progress**: both `onAssignment()` and `onRemoval()` call `resetProgress()`, which clears the *Mine* building's `progressPos`/`progressStage` (via `BuildingMiner.setProgressPos(null, null)`) — since the Quarrier's formal "home" building for progress-tracking purposes is still the Mine, not the Quarry itself, per the shared doc's explanation of `assignTo()`.
+- **The Quarry building only tracks a completion flag, not detailed dig state**: `QuarryModule` persists just `isFinished` (a simple boolean, set once via `setFinished()`) plus the assigned citizen. Confirmed in [`EntityAIQuarrier`](../../../minecolonies/src/main/java/com/minecolonies/core/entity/ai/workers/production/EntityAIQuarrier.java): digging a Quarry isn't a bespoke mechanic at all — it reuses the exact same structure-placement/work-order framework as the Builder (extends `AbstractEntityAIStructureWithWorkOrder`), treating the pit as a pre-made "shaft" blueprint that gets *cleared* layer-by-layer from the top down via a `LayerBlueprintIterator`, the same tooling used to build things, just running in reverse/removal mode. `setFinished()` is called once that structure work order completes.
+- **The Quarry produces only what it digs**: confirmed via `shallReplaceSolidSubstitutionBlock()`, which only special-cases real ore blocks (checked through the same `isOre()` compatibility check the Miner uses) — beyond that, blocks are removed via the plain structure-clearing `mineBlock()` path with no MineColonies-specific bonus-loot/ore-node system layered on top, unlike the Miner's own node/level mechanic.
