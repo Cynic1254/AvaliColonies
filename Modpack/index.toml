@@ -12,7 +12,7 @@ metafile = true
 
 [[files]]
 file = "mods/avaliconnector.pw.toml"
-hash = "87caa576ae81a78ee9379d9fd6109945873ae0a04f8b4971a120e104901f668c"
+hash = "4e5a07ccfcb32c28f543c1f29b1bf2a09086058f942699eee9bb3345ef734d09"
 metafile = true
 
 [[files]]
