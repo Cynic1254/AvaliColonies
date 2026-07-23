@@ -14,7 +14,7 @@ Sand into Clay
 5. 
 
 ### Research
-Requires the `Rcoking Roll` research to build
+Requires the `Rocking Roll` research to build
 by default the conversion is 1:2 with the `Gilded Hammer` research the conversion will be 1:1
 
 ### Skills
