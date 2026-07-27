@@ -87,6 +87,11 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
 }
 
 dependencies {
@@ -95,6 +100,7 @@ dependencies {
 
     // --- Dynamic Local AvaliTheme Build Dependency ---
     implementation "${findProperty('mod_group_id')}:${findProperty('avalitheme.mod_id')}:${findProperty('avalitheme.mod_version')}"
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
 
     // --- MineColonies Stack ---
     implementation fg.deobf("curse.maven:minecolonies-245506:8138329")
