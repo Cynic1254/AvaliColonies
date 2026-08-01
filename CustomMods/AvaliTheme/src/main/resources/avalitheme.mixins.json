@@ -2,16 +2,17 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.cynic1254.avalitheme.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "avalitheme.refmap.json",
   "mixins": [
-  ],
-  "client": [
+    "LivingEntitySwingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "overwrites": {
     "requireAnnotations": true
-  }
+  },
+  "client": [
+  ]
 }

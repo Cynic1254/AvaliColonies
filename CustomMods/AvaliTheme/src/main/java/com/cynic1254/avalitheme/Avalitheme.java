@@ -14,9 +14,9 @@ public class Avalitheme {
     public static final String MODID = "avalitheme";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public Avalitheme() {
+    public Avalitheme(FMLJavaModLoadingContext context) {
         // Fetch the mod event bus for lifecycle events
-        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        var modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for initialization
         modEventBus.addListener(this::commonSetup);
