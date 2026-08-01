@@ -1,3 +1,7 @@
+//=============================
+// Root project settings
+//=============================
+
 pluginManagement {
     repositories {
         gradlePluginPortal()

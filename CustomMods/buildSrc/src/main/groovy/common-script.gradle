@@ -1,4 +1,7 @@
-// buildSrc/src/main/groovy/avali-convention.gradle
+// ==========================================
+// Shared build script
+// ==========================================
+
 plugins {
     id 'eclipse'
     id 'idea'

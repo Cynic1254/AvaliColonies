@@ -11,6 +11,10 @@
         <module name="AvaliColonies.theme.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="AvaliTheme" target="17" />
+      <module name="avalitheme.main" target="17" />
+      <module name="avalitheme.test" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
