@@ -1,0 +1,44 @@
+[versions]
+# Define your version strings here
+foojay = "1.0.0"
+mixin = "0.7-SNAPSHOT"
+geckolib = "4.8.4"
+
+[libraries]
+# --- Core Infrastructures ---
+sponge-mixingradle = { group = "org.spongepowered", name = "mixingradle", version.ref = "mixin" }
+geckolib-forge = { group = "software.bernie.geckolib", name = "geckolib-forge-1.20.1", version.ref = "geckolib" }
+
+# --- MineColonies Sub-Dependency Stack (CurseMaven) ---
+curse-minecolonies = { group = "curse.maven", name = "minecolonies-245506", version = "8138329" }
+curse-blockui      = { group = "curse.maven", name = "blockui-522992",     version = "7541343" }
+curse-domum        = { group = "curse.maven", name = "domum-ornamentum-527361", version = "7585567" }
+curse-multipiston  = { group = "curse.maven", name = "multi-piston-303278", version = "5204918" }
+curse-structurize  = { group = "curse.maven", name = "structurize-298744",  version = "8138301" }
+curse-towntalk     = { group = "curse.maven", name = "towntalk-900364",    version = "5355511" }
+
+# --- Ad Astra Sub-Dependency Stack (CurseMaven) ---
+curse-adastra           = { group = "curse.maven", name = "ad-astra-635042",           version = "6262032" }
+curse-botarium          = { group = "curse.maven", name = "botarium-704113",           version = "5486070" }
+curse-resourcefulconfig = { group = "curse.maven", name = "resourceful-config-714059", version = "6231176" }
+curse-resourcefullib    = { group = "curse.maven", name = "resourceful-lib-570073",    version = "5659871" }
+
+[bundles]
+minecolonies-stack = [
+    "curse-minecolonies",
+    "curse-blockui",
+    "curse-domum",
+    "curse-multipiston",
+    "curse-structurize",
+    "curse-towntalk"
+]
+ad-astra-stack = [
+    "curse-adastra",
+    "curse-botarium",
+    "curse-resourcefulconfig",
+    "curse-resourcefullib"
+]
+
+[plugins]
+# Standard plugins with proper IDs can go here
+foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }

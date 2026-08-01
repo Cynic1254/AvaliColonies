@@ -4,9 +4,12 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'CustomMods/AvaliTheme/**'
-      - 'CustomMods/AvaliConnector/**'
-      - 'CustomMods/gradle.properties'
+      - 'theme/**'
+      - 'connector/**'
+      - 'buildSrc/**'
+      - 'gradle.properties'
+      - 'build.gradle'
+      - 'settings.gradle'
 
 jobs:
   evaluate-changes:
@@ -22,10 +25,10 @@ jobs:
       
       - id: set-matrix
         run: |
-          THEME=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliTheme/' && echo 'true' || echo 'false')
-          CONNECTOR=$(git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/AvaliConnector/' && echo 'true' || echo 'false')
+          THEME=$(git diff --name-only HEAD^ HEAD | grep -q '^theme/' && echo 'true' || echo 'false')
+          CONNECTOR=$(git diff --name-only HEAD^ HEAD | grep -q '^connector/' && echo 'true' || echo 'false')
           
-          if git diff --name-only HEAD^ HEAD | grep -q '^CustomMods/gradle.properties'; then
+          if git diff --name-only HEAD^ HEAD | grep -E -q '^(gradle\.properties|build\.gradle|settings\.gradle|buildSrc/)'; then
             THEME="true"
             CONNECTOR="true"
           fi
@@ -34,12 +37,12 @@ jobs:
           ADDED=false
           
           if [ "$THEME" = "true" ]; then
-            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"path\":\"CustomMods/AvaliTheme\",\"artifact\":\"avalitheme-latest\"}"
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"task\":\":theme:build\",\"artifact_path\":\"theme/build/libs/*.jar\",\"artifact\":\"avalitheme-latest\"}"
             ADDED=true
           fi
           if [ "$CONNECTOR" = "true" ]; then
             if [ "$ADDED" = true ]; then MATRIX_JSON="${MATRIX_JSON},"; fi
-            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avaliconnector\",\"path\":\"CustomMods/AvaliConnector\",\"artifact\":\"avaliconnector-latest\"}"
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avaliconnector\",\"task\":\":connector:build\",\"artifact_path\":\"connector/build/libs/*.jar\",\"artifact\":\"avaliconnector-latest\"}"
             ADDED=true
           fi
           
@@ -54,7 +57,8 @@ jobs:
       matrix: ${{ fromJson(needs.evaluate-changes.outputs.matrix) }}
     uses: ./.github/workflows/compile.yml
     with:
-      project_path: ${{ matrix.path }}
+      gradle_task: ${{ matrix.task }}
+      artifact_path: ${{ matrix.artifact_path }}
       artifact_name: ${{ matrix.artifact }}
 
   update-and-deploy:
@@ -88,7 +92,6 @@ jobs:
           name: avaliconnector-latest
           path: build-outputs/connector
 
-      # 1, 2, 3: Generate the files locally
       - name: Generate Meta & Stage Binaries
         run: |
           chmod +x .github/scripts/generate-toml.sh
@@ -97,28 +100,24 @@ jobs:
             ./.github/scripts/generate-toml.sh "avalitheme" "Avali Theme" "build-outputs/theme"
           fi
           if [ -d "build-outputs/connector" ]; then
-            ./.github/scripts/generate-toml.sh "avaliconnector" "Avali Colonies Connector" "build-outputs/connector"
+            ./.github/scripts/generate-toml.sh "avaliconnector" "Avali Connector" "build-outputs/connector"
           fi
 
-      # 4: Refresh packwiz index locally
       - name: Refresh Packwiz Index
         run: |
           cd Modpack
           chmod +x .bin/packwiz
           ./.bin/packwiz refresh
 
-      # 5: Create the Pages deployment bundle straight from the current workspace
       - name: Prepare Pages Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           path: './Modpack'
 
-      # 6: Push live to the web server immediately
       - name: Push Live to Web Server
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # 7: Commit and push tracking metadata back to the repository histories safely
       - name: Commit and Push Tracked Changes
         run: |
           git config --global user.name "GitHub Actions Bot"

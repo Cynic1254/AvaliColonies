@@ -1,0 +1,40 @@
+// buildSrc/src/main/groovy/avali-convention.gradle
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle'
+    id 'org.spongepowered.mixin'
+}
+
+group = providers.gradleProperty('mod_group_id').getOrElse('com.cynic1254')
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+// Shared Maven repositories for dependencies
+repositories {
+    mavenCentral()
+
+    maven {
+        name = 'Forge'
+        url = 'https://maven.minecraftforge.net/'
+    }
+
+    maven {
+        name = "CurseMaven"
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

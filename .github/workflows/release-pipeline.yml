@@ -10,13 +10,16 @@ jobs:
     strategy:
       matrix:
         include:
-          - path: "CustomMods/AvaliTheme"
+          - task: ":theme:build"
+            artifact_path: "theme/build/libs/*.jar"
             artifact: "avalitheme-release"
-          - path: "CustomMods/AvaliConnector"
+          - task: ":connector:build"
+            artifact_path: "connector/build/libs/*.jar"
             artifact: "avaliconnector-release"
     uses: ./.github/workflows/compile.yml
     with:
-      project_path: ${{ matrix.path }}
+      gradle_task: ${{ matrix.task }}
+      artifact_path: ${{ matrix.artifact_path }}
       artifact_name: ${{ matrix.artifact }}
       release_tag: ${{ github.ref_name }}
 

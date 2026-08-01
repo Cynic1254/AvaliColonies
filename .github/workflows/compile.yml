@@ -3,10 +3,14 @@ name: Shared Compilation Engine
 on:
   workflow_call:
     inputs:
-      project_path:
+      gradle_task:
         required: true
         type: string
-        description: "Relative path to the mod project folder (e.g., CustomMods/AvaliTheme)"
+        description: "The root Gradle task to execute (e.g. :theme:build)"
+      artifact_path:
+        required: true
+        type: string
+        description: "Path to built JAR files (e.g. theme/build/libs/*.jar)"
       artifact_name:
         required: true
         type: string
@@ -43,11 +47,10 @@ jobs:
       - name: Build Mod Project
         run: |
           chmod +x gradlew
-          ./gradlew build
-        working-directory: ${{ inputs.project_path }}
+          ./gradlew ${{ inputs.gradle_task }}
 
       - name: Stash Built Elements
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.artifact_name }}
-          path: ${{ inputs.project_path }}/build/libs/*.jar
+          path: ${{ inputs.artifact_path }}
