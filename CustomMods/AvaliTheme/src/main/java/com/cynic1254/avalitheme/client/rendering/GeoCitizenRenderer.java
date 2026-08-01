@@ -1,5 +1,6 @@
 package com.cynic1254.avalitheme.client.rendering;
 
+import com.cynic1254.avalitheme.client.rendering.layers.ItemGeoCitizenLayer;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,5 +16,7 @@ public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntity
     public GeoCitizenRenderer(EntityRendererProvider.Context context, GeoCitizenAnimatable animatable) {
         super(context, new DefaultedEntityGeoModel<>(PLACEHOLDER_MODEL), animatable);
         ModModelTypeInitializer.init(context);
+
+        addRenderLayer(new ItemGeoCitizenLayer(this));
     }
 }

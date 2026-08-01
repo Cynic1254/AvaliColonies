@@ -4,6 +4,9 @@ import com.cynic1254.avalitheme.client.rendering.GeoCitizenAnimatable;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.WaterFluid;
+import net.minecraftforge.fluids.FluidType;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -83,7 +86,7 @@ public class AvaliAnimations {
     private static boolean isActuallySwimming(AbstractEntityCitizen entity) {
         return entity.isInWater()
                 && !entity.isPassenger()
-                && (!entity.onGround() || entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold());
+                && (!entity.onGround() || entity.getFluidTypeHeight(Fluids.WATER.getFluidType()) > entity.getFluidJumpThreshold());
     }
 
     /**
