@@ -6,9 +6,3 @@ plugins {
     id 'eclipse'
     id 'idea'
 }
-
-// Convenient root clean task that cleans build outputs cleanly using modern Gradle APIs
-tasks.register('cleanAll', Delete) {
-    delete layout.buildDirectory
-    dependsOn subprojects.collect { it.tasks.matching { t -> t.name == 'clean' } }
-}

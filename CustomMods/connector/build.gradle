@@ -8,6 +8,11 @@ plugins {
 
 evaluationDependsOn(':theme')
 
+// Force connector tasks to wait until theme has completely finished reobfuscating its JAR
+tasks.matching { it.name.startsWith('reobf') || it.name == 'jar' || it.name == 'compileJava' }.configureEach {
+    mustRunAfter project(':theme').tasks.named('reobfJar')
+}
+
 base {
     archivesName = mod_id
 }
