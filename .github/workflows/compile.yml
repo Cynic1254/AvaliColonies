@@ -10,7 +10,7 @@ on:
       artifact_path:
         required: true
         type: string
-        description: "Path to built JAR files (e.g. theme/build/libs/*.jar)"
+        description: "Path to built JAR files (e.g. CustomMods/theme/build/libs/*.jar)"
       artifact_name:
         required: true
         type: string
@@ -44,7 +44,9 @@ jobs:
           chmod +x .github/scripts/update-version.sh
           .github/scripts/update-version.sh "${{ inputs.release_tag }}"
 
+      # Execute directly inside the CustomMods root directory where gradlew lives
       - name: Build Mod Project
+        working-directory: CustomMods
         run: |
           chmod +x gradlew
           ./gradlew ${{ inputs.gradle_task }}
