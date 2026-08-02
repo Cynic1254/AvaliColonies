@@ -25,10 +25,12 @@ jobs:
       
       - id: set-matrix
         run: |
-          THEME=$(git diff --name-only HEAD^ HEAD | grep -q '^theme/' && echo 'true' || echo 'false')
-          CONNECTOR=$(git diff --name-only HEAD^ HEAD | grep -q '^connector/' && echo 'true' || echo 'false')
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD 2>/dev/null || git diff-tree --no-commit-id --name-only -r HEAD)
+
+          THEME=$(echo "$CHANGED_FILES" | grep -q '^CustomMods/theme/' && echo 'true' || echo 'false')
+          CONNECTOR=$(echo "$CHANGED_FILES" | grep -q '^CustomMods/connector/' && echo 'true' || echo 'false')
           
-          if git diff --name-only HEAD^ HEAD | grep -E -q '^(gradle\.properties|build\.gradle|settings\.gradle|buildSrc/)'; then
+          if echo "$CHANGED_FILES" | grep -E -q '^CustomMods/(gradle\.properties|build\.gradle|settings\.gradle|buildSrc/)'; then
             THEME="true"
             CONNECTOR="true"
           fi
@@ -37,12 +39,12 @@ jobs:
           ADDED=false
           
           if [ "$THEME" = "true" ]; then
-            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"task\":\":theme:build\",\"artifact_path\":\"theme/build/libs/*.jar\",\"artifact\":\"avalitheme-latest\"}"
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"task\":\":theme:build\",\"artifact_path\":\"CustomMods/theme/build/libs/*.jar\",\"artifact\":\"avalitheme-latest\"}"
             ADDED=true
           fi
           if [ "$CONNECTOR" = "true" ]; then
             if [ "$ADDED" = true ]; then MATRIX_JSON="${MATRIX_JSON},"; fi
-            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avaliconnector\",\"task\":\":connector:build\",\"artifact_path\":\"connector/build/libs/*.jar\",\"artifact\":\"avaliconnector-latest\"}"
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avaliconnector\",\"task\":\":connector:build\",\"artifact_path\":\"CustomMods/connector/build/libs/*.jar\",\"artifact\":\"avaliconnector-latest\"}"
             ADDED=true
           fi
           
@@ -63,7 +65,7 @@ jobs:
 
   update-and-deploy:
     needs: [evaluate-changes, run-compiler]
-    if: ${{ always() && !cancelled() && !failure() }}
+    if: ${{ needs.evaluate-changes.outputs.run_build == 'true' && !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
