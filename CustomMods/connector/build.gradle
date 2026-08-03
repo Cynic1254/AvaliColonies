@@ -4,6 +4,7 @@
 
 plugins {
     id 'common-script'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 evaluationDependsOn(':theme')

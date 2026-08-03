@@ -103,7 +103,15 @@ public class AvaliAnimations {
      * field) and register additional triggerableAnim() entries here keyed off it.
      */
     public static AnimationController<GeoCitizenAnimatable> actionController(GeoCitizenAnimatable entity) {
-        return new AnimationController<>(entity, "action", 2, state -> PlayState.STOP)
-                .triggerableAnim("swing", DefaultAnimations.ATTACK_SWING);
+        return new AnimationController<>(entity, "action", 2, new AnimationController.AnimationStateHandler<GeoCitizenAnimatable>() {
+            @Override
+            public PlayState handle(AnimationState<GeoCitizenAnimatable> state) {
+                AbstractEntityCitizen citizen = (AbstractEntityCitizen) state.getData(DataTickets.ENTITY);
+                if (citizen.swinging) {
+                    return state.setAndContinue(DefaultAnimations.ATTACK_SWING);
+                }
+                return PlayState.STOP;
+            }
+        });
     }
 }

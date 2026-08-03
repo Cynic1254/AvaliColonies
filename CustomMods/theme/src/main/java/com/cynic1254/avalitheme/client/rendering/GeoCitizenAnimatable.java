@@ -22,7 +22,7 @@ public class GeoCitizenAnimatable implements GeoReplacedEntity {
     }
 
     @Override
-    public EntityType<?> getReplacingEntityType() {
+    public EntityType<? extends AbstractEntityCitizen> getReplacingEntityType() {
         return this.entityType;
     }
 

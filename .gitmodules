@@ -1,3 +1,6 @@
 [submodule "minecolonies"]
 	path = minecolonies
 	url = git@github.com:ldtteam/minecolonies.git
+[submodule "Structurize"]
+	path = Structurize
+	url = git@github.com:ldtteam/Structurize.git
