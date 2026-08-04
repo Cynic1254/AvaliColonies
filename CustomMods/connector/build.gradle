@@ -1,6 +1,7 @@
 // ==========================================
 // connector/build.gradle
 // ==========================================
+//file:noinspection DependencyNotationArgument
 
 plugins {
     id 'common-script'
@@ -74,7 +75,15 @@ dependencies {
     implementation fg.deobf(libs.bundles.minecolonies.stack)
 
     // --- Ad Astra Stack ---
-    implementation fg.deobf(libs.bundles.ad.astra.stack)
+    implementation fg.deobf(libs.adastra) {
+        // --- Exclude optional dependencies as we should probably install those explicitly ---
+        exclude group: 'javazoom'
+        exclude group: 'io.github.llamalad7'
+        exclude group: 'com.simibubi.create'
+        exclude group: 'dev.engine-room.flywheel'
+        exclude group: 'net.createmod.ponder'
+        exclude group: 'com.tterrag.registrate'
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {

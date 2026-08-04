@@ -18,6 +18,13 @@ pluginManagement {
             }
         }
         maven { url = 'https://maven.parchmentmc.org' }
+        maven {
+            name 'LDTTeam - Modding'
+            url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+        }
+        maven {
+            url = "https://maven.teamresourceful.com/repository/maven-public/"
+        }
     }
 }
 

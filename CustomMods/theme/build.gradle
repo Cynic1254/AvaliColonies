@@ -1,6 +1,7 @@
 // ==========================================
 // theme/build.gradle
 // ==========================================
+//file:noinspection DependencyNotationArgument
 
 plugins {
     id 'common-script'

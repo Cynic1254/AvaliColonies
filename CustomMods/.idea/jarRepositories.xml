@@ -51,5 +51,15 @@
       <option name="name" value="ParchmentMC" />
       <option name="url" value="https://maven.parchmentmc.org/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="LDTTeam" />
+      <option name="name" value="LDTTeam" />
+      <option name="url" value="https://ldtteam.jfrog.io/ldtteam/modding/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://maven.teamresourceful.com/repository/maven-public/" />
+    </remote-repository>
   </component>
 </project>

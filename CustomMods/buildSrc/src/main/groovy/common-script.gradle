@@ -20,6 +20,15 @@ repositories {
     mavenCentral()
 
     maven {
+        name = 'LDTTeam'
+        url = 'https://ldtteam.jfrog.io/ldtteam/modding/'
+    }
+
+    maven {
+        url = "https://maven.teamresourceful.com/repository/maven-public/"
+    }
+
+    maven {
         name = 'Forge'
         url = 'https://maven.minecraftforge.net/'
     }
