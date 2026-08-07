@@ -1,8 +1,8 @@
 name = "Avali Theme"
-filename = "avalitheme-1.0.0.jar"
+filename = "avali_theme-1.0.0.jar"
 side = "both"
 
 [download]
-url = "https://Cynic1254.github.io/AvaliColonies/.bin/avalitheme-1.0.0.jar"
+url = "https://Cynic1254.github.io/AvaliColonies/.bin/avali_theme-1.0.0.jar"
 hash-format = "sha256"
-hash = "6b166b4cb9f63416df64012ef6cc59db58cfa4256abe696c90390cdb3426e6c7"
+hash = "d2c9cfc1eccd3d17d5d8149c997b042758747b4a528aac71627ef17044f32ba8"
