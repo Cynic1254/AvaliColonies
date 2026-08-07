@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = "avalitheme", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = "avali_theme", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class RegistryHandler {
 
     @OnlyIn(Dist.CLIENT)

@@ -33,8 +33,8 @@ public class GeoCitizenAnimatable implements GeoReplacedEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(AvaliAnimations.locomotionController(this));      // idle / walk / run
-        controllers.add(AvaliAnimations.actionController(this));          // swing / working actions
+        controllers.add(AvaliAnimations.locomotionController(this));
+        controllers.add(AvaliAnimations.actionController(this));
         controllers.add(AvaliAnimations.deathController(this));
     }
 }

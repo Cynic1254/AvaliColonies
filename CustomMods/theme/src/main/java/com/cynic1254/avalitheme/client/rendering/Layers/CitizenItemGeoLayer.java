@@ -36,7 +36,7 @@ public class CitizenItemGeoLayer extends BlockAndItemGeoLayer<GeoCitizenAnimatab
 
     @Override
     protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, GeoCitizenAnimatable animatable) {
-        return Objects.equals(bone.getName(), "RightHand") ? ItemDisplayContext.FIXED : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+        return Objects.equals(bone.getName(), "RightHand") ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
     }
 
     @Override

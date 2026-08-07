@@ -1,0 +1,41 @@
+{
+  "model": "<resourceLocation>",
+  "attachments": [
+    {
+      "bone": "<string | array[string]>",
+      "chance": "<number: 0.0-1.0 (optional, default 1.0)>",
+      "meshes": [
+        {
+          "mesh": "<resourceLocation>",
+          "weight": "<number (optional, default 1.0)>"
+        }
+      ]
+    }
+  ],
+  "texture": {
+    "base": {
+      "texture": "<resourceLocation>",
+      "colors": [
+        "<colorHex>",
+        {
+          "min": "<colorHex>",
+          "max": "<colorHex>"
+        }
+      ]
+    },
+    "overlays": [
+      {
+        "chance": "<number: 0.0-1.0 (optional, default 1.0)>",
+        "blend_mode": "<string: 'normal' | 'multiply' | 'add' | 'overlay' (optional, default 'normal')>",
+        "textures": "<resourceLocation | array[resourceLocation] | array[object]>",
+        "colors": [
+          "<colorHex>",
+          {
+            "min": "<colorHex>",
+            "max": "<colorHex>"
+          }
+        ]
+      }
+    ]
+  }
+}

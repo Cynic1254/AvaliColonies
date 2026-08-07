@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CitizenProceduralDefinition",
+  "type": "object",
+  "required": [
+    "model",
+    "texture"
+  ],
+  "properties": {
+    "model": {
+      "$ref": "#/$defs/resourceLocation"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attachmentGroup"
+      }
+    },
+    "texture": {
+      "type": "object",
+      "required": [
+        "base"
+      ],
+      "properties": {
+        "base": {
+          "$ref": "#/$defs/textureLayerBase"
+        },
+        "overlays": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/overlayGroup"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "resourceLocation": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+:[a-z0-9_/.-]+$"
+    },
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$"
+    },
+    "colorEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hexColor"
+        },
+        {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "$ref": "#/$defs/hexColor"
+            },
+            "max": {
+              "$ref": "#/$defs/hexColor"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "attachmentMesh": {
+      "type": "object",
+      "required": [
+        "mesh"
+      ],
+      "properties": {
+        "mesh": {
+          "$ref": "#/$defs/resourceLocation"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "attachmentGroup": {
+      "type": "object",
+      "required": [
+        "bone",
+        "meshes"
+      ],
+      "properties": {
+        "bone": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          ]
+        },
+        "chance": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 1.0
+        },
+        "meshes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attachmentMesh"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "textureLayerBase": {
+      "type": "object",
+      "required": [
+        "texture"
+      ],
+      "properties": {
+        "texture": {
+          "$ref": "#/$defs/resourceLocation"
+        },
+        "colors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/colorEntry"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "overlayTextureEntry": {
+      "type": "object",
+      "required": [
+        "texture"
+      ],
+      "properties": {
+        "texture": {
+          "$ref": "#/$defs/resourceLocation"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "overlayGroup": {
+      "type": "object",
+      "required": [
+        "textures"
+      ],
+      "properties": {
+        "textures": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/resourceLocation"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/resourceLocation"
+              },
+              "minItems": 1
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/overlayTextureEntry"
+              },
+              "minItems": 1
+            }
+          ]
+        },
+        "chance": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 1.0
+        },
+        "blend_mode": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "multiply",
+            "add",
+            "overlay"
+          ],
+          "default": "normal"
+        },
+        "colors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/colorEntry"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
