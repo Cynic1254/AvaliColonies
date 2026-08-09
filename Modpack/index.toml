@@ -17,7 +17,7 @@ metafile = true
 
 [[files]]
 file = "mods/avalitheme.pw.toml"
-hash = "dc9e0059b50135c9bd19082a5386bfba61b3d195b9bb12850035c2068e4b74c0"
+hash = "eb6bcc9e55e16d09e2562082d5118ec227d75260a6bbd5c56266f0fb88ec576d"
 metafile = true
 
 [[files]]
