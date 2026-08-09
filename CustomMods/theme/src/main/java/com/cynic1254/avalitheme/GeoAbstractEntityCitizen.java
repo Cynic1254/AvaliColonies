@@ -10,4 +10,5 @@ public interface GeoAbstractEntityCitizen {
     default TextureIdentifierDefinition getTextureID() {return new TextureIdentifierDefinition("");}
     default ResourceLocation getModelId() {return null;}
     default Map<String, ResourceLocation> getAttachments() {return new HashMap<>();}
+    default void setRenderData(String texture, String model, String attachments) {}
 }

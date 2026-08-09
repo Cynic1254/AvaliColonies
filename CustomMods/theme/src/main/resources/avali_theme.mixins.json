@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "avalitheme.refmap.json",
   "mixins": [
-    "AbstractEntityCitizenMixin"
+    "AbstractEntityCitizenMixin",
+    "CitizenDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1

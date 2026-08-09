@@ -3,6 +3,25 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Citizen Procedural Definition">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Citizen Procedural Definition" />
+              <option name="relativePathToSchema" value="../DesignDocuments/Data Structures/Model/Schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="theme/src/main/resources/assets/avali_theme/citizens/default.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="theme/src/main/resources/data/avali_theme/citizens/default.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="Minecraft Data Pack Metadata">
           <value>
             <SchemaInfo>

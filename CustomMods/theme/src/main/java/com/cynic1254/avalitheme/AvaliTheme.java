@@ -1,8 +1,5 @@
 package com.cynic1254.avalitheme;
 
-import com.cynic1254.avalitheme.client.rendering.model.GeoCitizenAttachmentModel;
-import com.cynic1254.avalitheme.client.rendering.model.GeoCitizenModel;
-import com.cynic1254.avalitheme.client.rendering.textures.TextureManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -30,11 +27,5 @@ public class AvaliTheme {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Avali theme initialization phase complete.");
-    }
-
-    public static void clearCache() {
-        TextureManager.clearTextureCache();
-        GeoCitizenModel.clearCache();
-        GeoCitizenAttachmentModel.clearCache();
     }
 }
