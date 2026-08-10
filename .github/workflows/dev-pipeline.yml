@@ -39,7 +39,7 @@ jobs:
           ADDED=false
           
           if [ "$THEME" = "true" ]; then
-            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"avalitheme\",\"task\":\":theme:build\",\"artifact_path\":\"CustomMods/theme/build/libs/*.jar\",\"artifact\":\"avalitheme-latest\"}"
+            MATRIX_JSON="${MATRIX_JSON}{\"id\":\"procedural_citizens\",\"task\":\":theme:build\",\"artifact_path\":\"CustomMods/theme/build/libs/*.jar\",\"artifact\":\"procedural_citizens-latest\"}"
             ADDED=true
           fi
           if [ "$CONNECTOR" = "true" ]; then
@@ -81,7 +81,7 @@ jobs:
           lfs: true
 
       - name: Download Theme Jar
-        if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'avalitheme-latest') }}
+        if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'procedural_citizens-latest') }}
         uses: actions/download-artifact@v4
         with:
           name: avalitheme-latest
@@ -99,7 +99,7 @@ jobs:
           chmod +x .github/scripts/generate-toml.sh
           
           if [ -d "build-outputs/theme" ]; then
-            ./.github/scripts/generate-toml.sh "avalitheme" "Avali Theme" "build-outputs/theme"
+            ./.github/scripts/generate-toml.sh "procedural_citizens" "Procedural Citizens" "build-outputs/theme"
           fi
           if [ -d "build-outputs/connector" ]; then
             ./.github/scripts/generate-toml.sh "avaliconnector" "Avali Connector" "build-outputs/connector"

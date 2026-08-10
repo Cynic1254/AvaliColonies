@@ -16,7 +16,7 @@ hash = "267b4a4485f3a70042ccf27a15470f9397cbb8fac3ef5e5d9d19287fd6ecdc4d"
 metafile = true
 
 [[files]]
-file = "mods/avalitheme.pw.toml"
+file = "mods/procedural_citizens.pw.toml"
 hash = "eb6bcc9e55e16d09e2562082d5118ec227d75260a6bbd5c56266f0fb88ec576d"
 metafile = true
 

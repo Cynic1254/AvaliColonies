@@ -12,7 +12,7 @@ jobs:
         include:
           - task: ":theme:build"
             artifact_path: "theme/build/libs/*.jar"
-            artifact: "avalitheme-release"
+            artifact: "procedural_citizens-release"
           - task: ":connector:build"
             artifact_path: "connector/build/libs/*.jar"
             artifact: "avaliconnector-release"
