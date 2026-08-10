@@ -84,7 +84,7 @@ jobs:
         if: ${{ contains(needs.evaluate-changes.outputs.matrix, 'procedural_citizens-latest') }}
         uses: actions/download-artifact@v4
         with:
-          name: avalitheme-latest
+          name: procedural_citizens-latest
           path: build-outputs/theme
 
       - name: Download Connector Jar
