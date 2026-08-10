@@ -12,12 +12,7 @@ metafile = true
 
 [[files]]
 file = "mods/avaliconnector.pw.toml"
-hash = "267b4a4485f3a70042ccf27a15470f9397cbb8fac3ef5e5d9d19287fd6ecdc4d"
-metafile = true
-
-[[files]]
-file = "mods/procedural_citizens.pw.toml"
-hash = "eb6bcc9e55e16d09e2562082d5118ec227d75260a6bbd5c56266f0fb88ec576d"
+hash = "d83eac3b5525dc42017b600b172e58274b4562e65aeeb3f34eda2d05e6fab099"
 metafile = true
 
 [[files]]
@@ -58,6 +53,11 @@ metafile = true
 [[files]]
 file = "mods/multi-piston.pw.toml"
 hash = "9895bf13e14fbb0b5284f7ad800b1fb3c7d4c373306231d5c6f95a282079fcbe"
+metafile = true
+
+[[files]]
+file = "mods/procedural_citizens.pw.toml"
+hash = "3b6d92d8fa7786c83962d25f90751aea287b0f152ee3bb0ce12202beec7bbfd0"
 metafile = true
 
 [[files]]
