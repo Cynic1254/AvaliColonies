@@ -101,7 +101,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
-            avalitheme_version     : themeProject.version
+            procedural_citizens_version     : themeProject.version
     ]
 
     inputs.properties replaceProperties

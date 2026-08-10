@@ -25,9 +25,9 @@ side = "BOTH"
 
 # Explicitly require the standalone plugin to be loaded first
 [[dependencies."${mod_id}"]]
-modId = "avalitheme"
+modId = "procedural_citizens"
 mandatory = true
-versionRange = "[${avalitheme_version}]"
+versionRange = "[${procedural_citizens_version}]"
 ordering = "AFTER"
 side = "BOTH"
 

@@ -1,0 +1,12 @@
+{
+  "model": "procedural_citizens:default",
+  "texture": {
+    "base": {
+      "texture": "procedural_citizens:default",
+      "colors": [{
+        "min": "000000",
+        "max": "FFFFFF"
+      }]
+    }
+  }
+}

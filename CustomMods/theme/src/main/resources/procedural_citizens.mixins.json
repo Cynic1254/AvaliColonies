@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.cynic1254.proceduralcitizens.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "procedural_citizens.refmap.json",
+  "mixins": [
+    "AbstractEntityCitizenMixin",
+    "CitizenDataMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+  ]
+}
