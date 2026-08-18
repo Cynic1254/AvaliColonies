@@ -1,0 +1,12 @@
+- Handle entity armor
+- Handle job defined textures (Likely through a render layer)
+- remove gender logic from minecolonies
+- implement custom voice pack resources
+- implement custom name resources
+- invisible model to use while correct citizen data loads
+- error model for when loading fails
+- more error handling
+- Cleanup the definition json format to be more lenient with the type of data it accepts
+  - Weighted texture objects need to be able to simplify to just a string specifying the resource location, the weight should be implicitly 1
+  - fields accepting a list should accept a direct object if only 1 object is provided
+  - allow for different color formats when specifying tint color

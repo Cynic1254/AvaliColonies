@@ -1,4 +1,4 @@
-package com.cynic1254.proceduralcitizens.data;
+package com.cynic1254.proceduralcitizens.cache;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,15 +16,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AvaliPackMetaCache {
+public class CitizenPackMetaCache {
     private static final Gson GSON = new Gson();
     private static final Map<String, List<WeightedDefinition>> CACHE = new ConcurrentHashMap<>();
 
-    public record WeightedDefinition(ResourceLocation id, float weight) {}
+    public record WeightedDefinition(ResourceLocation modelID, float weight) {}
 
     public static List<WeightedDefinition> getDefinitions(String packName)
     {
-        return CACHE.computeIfAbsent(packName, AvaliPackMetaCache::load);
+        return CACHE.computeIfAbsent(packName, CitizenPackMetaCache::load);
+    }
+
+    public static void clearMetaCache() {
+        CACHE.clear();
     }
 
     private static List<WeightedDefinition> load(String packName)
@@ -37,7 +41,7 @@ public class AvaliPackMetaCache {
         try (Reader r = Files.newBufferedReader(packJson))
         {
             JsonObject root = GSON.fromJson(r, JsonObject.class);
-            JsonArray arr = root.getAsJsonArray("citizen_definitions"); // your new key
+            JsonArray arr = root.getAsJsonArray("models"); // your new key
             if (arr == null) return List.of();
 
             List<WeightedDefinition> out = new ArrayList<>();
@@ -45,7 +49,7 @@ public class AvaliPackMetaCache {
             {
                 JsonObject o = e.getAsJsonObject();
                 out.add(new WeightedDefinition(
-                        ResourceLocation.parse(o.get("id").getAsString()),
+                        ResourceLocation.parse(o.get("model").getAsString()),
                         o.has("weight") ? o.get("weight").getAsFloat() : 1.0f));
             }
             return out;

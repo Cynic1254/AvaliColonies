@@ -1,5 +1,6 @@
 package com.cynic1254.proceduralcitizens.client.rendering.textures;
 
+import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,13 +69,13 @@ public record TextureIdentifierDefinition(String textureID) {
         // --- Parsing methods ---
         private static ResourceLocation parseIdentifier(String input) {
             if (input == null || input.isEmpty()) {
-                return ResourceLocation.fromNamespaceAndPath("minecraft", "missingno");
+                return CitizenDefaults.MISSINGNO_TEXTURE;
             }
 
             String rawPath = input.split("#")[0];
             ResourceLocation resource = ResourceLocation.tryParse(rawPath);
 
-            return resource != null ? resource : ResourceLocation.fromNamespaceAndPath("minecraft", "missingno");
+            return resource != null ? resource : CitizenDefaults.MISSINGNO_TEXTURE;
         }
 
         private static int parseColor(String input) {

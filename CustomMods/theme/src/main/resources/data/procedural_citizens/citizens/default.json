@@ -2,11 +2,24 @@
   "model": "procedural_citizens:default",
   "texture": {
     "base": {
-      "texture": "procedural_citizens:default",
-      "colors": [{
-        "min": "000000",
-        "max": "FFFFFF"
-      }]
+      "textures": [
+        "minecolonies:default/citizenmale1_a",
+        "minecolonies:default/citizenmale1_b",
+        "minecolonies:default/citizenmale1_d",
+        "minecolonies:default/citizenmale1_w",
+        "minecolonies:default/citizenmale2_a",
+        "minecolonies:default/citizenmale2_b",
+        "minecolonies:default/citizenmale2_d",
+        "minecolonies:default/citizenmale2_w",
+        "minecolonies:default/citizenmale3_a",
+        "minecolonies:default/citizenmale3_b",
+        "minecolonies:default/citizenmale3_d",
+        "minecolonies:default/citizenmale3_w"
+      ],
+      "colors": {
+        "min": "#000000",
+        "max": "#FFFFFF"
+      }
     }
   }
 }

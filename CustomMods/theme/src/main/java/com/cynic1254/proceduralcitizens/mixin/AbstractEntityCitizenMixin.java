@@ -35,7 +35,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
     private void procedural$defineData(CallbackInfo ci) {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
         truethis.getEntityData().define(DATA_PROCEDURAL_TEXTURE, CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION.toString());
-        truethis.getEntityData().define(DATA_PROCEDURAL_MODEL, CitizenDefaults.PLACEHOLDER_MODEL_ID.toString());
+        truethis.getEntityData().define(DATA_PROCEDURAL_MODEL, CitizenDefaults.EMPTY_MODEL_ID.toString());
         truethis.getEntityData().define(DATA_PROCEDURAL_ATTACHMENTS, "");
     }
 

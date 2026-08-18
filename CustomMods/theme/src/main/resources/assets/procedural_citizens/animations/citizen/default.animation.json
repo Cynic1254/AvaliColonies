@@ -5,7 +5,7 @@
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
-				"LeftLeg": {
+				"leftLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -24,7 +24,7 @@
 						}
 					}
 				},
-				"RightLeg": {
+				"rightLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -43,7 +43,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"rightArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -62,7 +62,7 @@
 						}
 					}
 				},
-				"LeftArm": {
+				"leftArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -87,12 +87,12 @@
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
-				"Root": {
+				"root": {
 					"rotation": {
 						"vector": [90, 0, 0]
 					}
 				},
-				"LeftLeg": {
+				"leftLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -111,7 +111,7 @@
 						}
 					}
 				},
-				"RightLeg": {
+				"rightLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -130,12 +130,12 @@
 						}
 					}
 				},
-				"Head": {
+				"head": {
 					"rotation": {
 						"vector": [-90, 0, 0]
 					}
 				},
-				"RightArm": {
+				"rightArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -154,7 +154,7 @@
 						}
 					}
 				},
-				"LeftArm": {
+				"leftArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -179,7 +179,7 @@
 			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
-				"LeftLeg": {
+				"leftLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -198,7 +198,7 @@
 						}
 					}
 				},
-				"RightLeg": {
+				"rightLeg": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -217,7 +217,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"rightArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -236,7 +236,7 @@
 						}
 					}
 				},
-				"LeftArm": {
+				"leftArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
@@ -260,7 +260,7 @@
 		"misc.rest": {
 			"loop": "hold_on_last_frame",
 			"bones": {
-				"Root": {
+				"root": {
 					"rotation": {
 						"vector": [-90, 0, 0]
 					},
@@ -273,17 +273,17 @@
 		"misc.sit": {
 			"loop": "hold_on_last_frame",
 			"bones": {
-				"Root": {
+				"root": {
 					"position": {
 						"vector": [0, -10, 0]
 					}
 				},
-				"LeftLeg": {
+				"leftLeg": {
 					"rotation": {
 						"vector": [-90, 0, 0]
 					}
 				},
-				"RightLeg": {
+				"rightLeg": {
 					"rotation": {
 						"vector": [-90, 0, 0]
 					}
@@ -300,7 +300,7 @@
 			"loop": true,
 			"animation_length": 0.1875,
 			"bones": {
-				"RightArm": {
+				"rightArm": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]

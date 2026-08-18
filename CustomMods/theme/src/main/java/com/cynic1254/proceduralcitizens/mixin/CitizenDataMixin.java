@@ -2,18 +2,16 @@ package com.cynic1254.proceduralcitizens.mixin;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition;
-import com.cynic1254.proceduralcitizens.data.AvaliPackMetaCache;
+import com.cynic1254.proceduralcitizens.cache.CitizenPackMetaCache;
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
-import com.cynic1254.proceduralcitizens.data.GeoCitizenDefinitionCache;
+import com.cynic1254.proceduralcitizens.cache.GeoCitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.data.encoders.CitizenAttachmentEncoding;
 import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.colony.CitizenData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,12 +23,6 @@ import java.util.*;
 
 @Mixin(CitizenData.class)
 public abstract class CitizenDataMixin {
-    @Shadow
-    public abstract Random getRandom();
-
-    @Shadow
-    @NotNull
-    public abstract Optional<AbstractEntityCitizen> getEntity();
 
     @Unique
     private static final String TAG_PROCEDURAL_TEXTURE = "proceduralTexture";
@@ -40,50 +32,56 @@ public abstract class CitizenDataMixin {
     private static final String TAG_PROCEDURAL_ATTACHMENTS = "proceduralAttachment";
 
     @Unique
-    private TextureIdentifierDefinition procedural$texture = new TextureIdentifierDefinition("");
+    private TextureIdentifierDefinition procedural$texture = CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION;
 
     @Unique
-    private ResourceLocation procedural$modelId = CitizenDefaults.PLACEHOLDER_MODEL_ID;
+    private ResourceLocation procedural$modelId = CitizenDefaults.EMPTY_MODEL_ID;
 
     @Unique
     private Map<String, ResourceLocation> procedural$attachments = new HashMap<>();
 
     @Inject(method = "initForNewCivilian", at = @At("TAIL"), remap = false)
     private void procedural$rollAppearance(CallbackInfo ci) {
+        CitizenData mixinThis = (CitizenData)(Object)this;
+
         ResourceLocation defId = procedural$pickDefinitionId();
         GeoCitizenDefinition citizenDefinition = GeoCitizenDefinitionCache.getDefinition(defId).orElse(null);
 
         if (citizenDefinition == null)
         {
-            this.procedural$modelId = CitizenDefaults.PLACEHOLDER_MODEL_ID;
-            this.procedural$texture = new TextureIdentifierDefinition(CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION.toString());
+            // Set render data to a clear error state
+            this.procedural$modelId = CitizenDefaults.MISSING_MODEL_ID;
+            this.procedural$texture = CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION;
             this.procedural$attachments = new HashMap<>();
             return;
         }
 
         this.procedural$modelId = citizenDefinition.model();
-        this.procedural$texture = citizenDefinition.rollTextureDefinition(getRandom());
-        this.procedural$attachments = citizenDefinition.rollAttachments(getRandom());
+        this.procedural$texture = citizenDefinition.rollTextureDefinition(mixinThis.getRandom());
+        this.procedural$attachments = citizenDefinition.rollAttachments(mixinThis.getRandom());
     }
 
     @Unique
     private ResourceLocation procedural$pickDefinitionId() {
-        List<AvaliPackMetaCache.WeightedDefinition> pool =
-                AvaliPackMetaCache.getDefinitions(((CitizenData)(Object)this).getColony().getStructurePack());
+        CitizenData mixinThis = (CitizenData)(Object)this;
+
+        List<CitizenPackMetaCache.WeightedDefinition> pool =
+                CitizenPackMetaCache.getDefinitions(mixinThis.getColony().getStructurePack());
 
         if (pool.isEmpty()) {
-            return CitizenDefaults.PLACEHOLDER_MODEL_ID;
+            return CitizenDefaults.DEFAULT_CITIZEN_DEFINITION_ID;
         }
 
         float totalWeight = 0f;
         for (var d : pool) totalWeight += d.weight();
-        float roll = getRandom().nextFloat() * totalWeight;
+        float roll = mixinThis.getRandom().nextFloat() * totalWeight;
         float cumulative = 0f;
         for (var d : pool) {
             cumulative += d.weight();
-            if (roll <= cumulative) return d.id();
+            if (roll <= cumulative)
+                return d.modelID();
         }
-        return pool.get(0).id();
+        return pool.get(0).modelID();
     }
 
     @Inject(
@@ -94,7 +92,8 @@ public abstract class CitizenDataMixin {
     )
     private void procedural$serialize(CallbackInfoReturnable<CompoundTag> cir, CompoundTag nbtTagCompound) {
         nbtTagCompound.putString(TAG_PROCEDURAL_TEXTURE, procedural$texture.textureID());
-        nbtTagCompound.putString(TAG_PROCEDURAL_MODEL, procedural$modelId == null ? "" : procedural$modelId.toString());
+        nbtTagCompound.putString(TAG_PROCEDURAL_MODEL, procedural$modelId == null ?
+                CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString());
         nbtTagCompound.putString(TAG_PROCEDURAL_ATTACHMENTS, CitizenAttachmentEncoding.encode(procedural$attachments));
     }
 
@@ -104,18 +103,21 @@ public abstract class CitizenDataMixin {
 
         String modelStr = nbtTagCompound.getString(TAG_PROCEDURAL_MODEL);
         ResourceLocation parsedModel = modelStr.isEmpty() ? null : ResourceLocation.tryParse(modelStr);
-        procedural$modelId = parsedModel != null ? parsedModel : CitizenDefaults.PLACEHOLDER_MODEL_ID;
+        procedural$modelId = parsedModel != null ? parsedModel : CitizenDefaults.MISSING_MODEL_ID;
 
         procedural$attachments = CitizenAttachmentEncoding.decode(nbtTagCompound.getString(TAG_PROCEDURAL_ATTACHMENTS));
     }
 
     @Inject(method = "initEntityValues", at = @At("TAIL"), remap = false)
     private void procedural$pushToEntity(CallbackInfo ci) {
-        getEntity().ifPresent(citizen -> {
+        CitizenData mixinThis = (CitizenData)(Object)this;
+
+        mixinThis.getEntity().ifPresent(citizen -> {
             var mutable = (AbstractEntityCitizen & GeoAbstractEntityCitizen) citizen;
             mutable.setRenderData(
                     procedural$texture.textureID(),
-                    procedural$modelId == null ? "" : procedural$modelId.toString(),
+                    procedural$modelId == null ?
+                            CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString(),
                     CitizenAttachmentEncoding.encode(procedural$attachments)
             );
         });

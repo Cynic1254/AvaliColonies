@@ -1,9 +1,9 @@
 package com.cynic1254.proceduralcitizens.data.records;
 
-import com.cynic1254.proceduralcitizens.ProceduralCitizens;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.TextureIdentifierObject;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.BlendMode;
+import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,15 +16,14 @@ public record GeoCitizenDefinition(
 ) {
     public GeoCitizenDefinition {
         if (model == null) {
-            model = ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "default");
+            model = CitizenDefaults.MISSING_MODEL_ID;
         }
         if (attachments == null) {
             attachments = List.of(); // Empty list instead of null
         }
         if (texture == null) {
             texture = new TexturePipeline(
-                    new BaseTexture(ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "missingno"), List.of()),
-                    List.of()
+                    new BaseTexture(List.of(new WeightedTexture(CitizenDefaults.MISSINGNO_TEXTURE, 1.0f)), List.of()), List.of()
             );
         }
     }
@@ -67,7 +66,7 @@ public record GeoCitizenDefinition(
             }
 
             return out;
-        };
+        }
 
         public Optional<ResourceLocation> rollAttachmentMesh(Random random) {
             if (meshes.isEmpty() || random.nextFloat() > chance) {
@@ -102,7 +101,8 @@ public record GeoCitizenDefinition(
             float weight
     ) {
         public AttachmentMesh {
-            if (mesh == null) mesh = ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "default");
+            if (mesh == null)
+                mesh = CitizenDefaults.MISSING_MODEL_ID;
             if (weight <= 0.0f) weight = 1.0f;
         }
     }
@@ -113,7 +113,7 @@ public record GeoCitizenDefinition(
     ) {
         public TexturePipeline {
             if (base == null) {
-                base = new BaseTexture(ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "missingno"), List.of());
+                base = new BaseTexture(List.of(new WeightedTexture(CitizenDefaults.MISSINGNO_TEXTURE, 1.0f)), List.of());
             }
             if (overlays == null) overlays = List.of();
         }
@@ -135,17 +135,18 @@ public record GeoCitizenDefinition(
 
     //TODO: textures should also accept a list of textures, similarly to OverlayGroup
     public record BaseTexture(
-            ResourceLocation texture,
+            List<WeightedTexture> textures,
             List<ColorEntry> colors
     ) {
         public BaseTexture {
-            if (texture == null) texture = ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "missingno");
+            if (textures.isEmpty())
+                textures.add(new WeightedTexture(CitizenDefaults.MISSINGNO_TEXTURE, 1.0f));
             if (colors == null) colors = List.of();
         }
 
         public TextureIdentifierObject roll(Random random) {
             int rolledColor = ColorEntry.rollColorList(colors, random);
-            return new TextureIdentifierObject(texture, rolledColor, BlendMode.NORMAL);
+            return new TextureIdentifierObject(WeightedTexture.roll(textures, random), rolledColor, BlendMode.NORMAL);
         }
     }
 
@@ -168,6 +169,24 @@ public record GeoCitizenDefinition(
                 return Optional.empty();
             }
 
+            int rolledColor = ColorEntry.rollColorList(colors, random);
+            BlendMode parsedBlendMode = BlendMode.fromString(blendMode);
+
+            return Optional.of(new TextureIdentifierObject(WeightedTexture.roll(textures, random), rolledColor, parsedBlendMode));
+        }
+    }
+
+    public record WeightedTexture(
+            ResourceLocation texture,
+            float weight
+    ) {
+        public WeightedTexture {
+            if (texture == null)
+                texture = CitizenDefaults.MISSINGNO_TEXTURE;
+            if (weight <= 0.0f) weight = 1.0f;
+        }
+
+        public static ResourceLocation roll(List<WeightedTexture> textures, Random random) {
             // Weighted Texture Selection
             float totalWeight = 0.0f;
             for (WeightedTexture wt : textures) {
@@ -190,21 +209,7 @@ public record GeoCitizenDefinition(
             if (selectedTexture == null) {
                 selectedTexture = textures.get(0).texture();
             }
-
-            int rolledColor = ColorEntry.rollColorList(colors, random);
-            BlendMode parsedBlendMode = BlendMode.fromString(blendMode);
-
-            return Optional.of(new TextureIdentifierObject(selectedTexture, rolledColor, parsedBlendMode));
-        }
-    }
-
-    public record WeightedTexture(
-            ResourceLocation texture,
-            float weight
-    ) {
-        public WeightedTexture {
-            if (texture == null) texture = ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "missingno");
-            if (weight <= 0.0f) weight = 1.0f;
+            return selectedTexture;
         }
     }
 

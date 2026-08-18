@@ -2,7 +2,7 @@ package com.cynic1254.proceduralcitizens.client;
 
 import com.cynic1254.proceduralcitizens.ProceduralCitizens;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
-import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenRenderer;
+import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
 import com.minecolonies.api.entity.ModEntities;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

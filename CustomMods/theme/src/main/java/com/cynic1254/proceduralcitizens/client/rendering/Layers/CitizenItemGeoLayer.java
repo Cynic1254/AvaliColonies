@@ -1,7 +1,7 @@
 package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
-import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenRenderer;
+import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

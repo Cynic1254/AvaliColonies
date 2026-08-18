@@ -11,10 +11,17 @@
       "$ref": "#/$defs/resourceLocation"
     },
     "attachments": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/attachmentGroup"
-      }
+      "oneOf": [
+        {
+          "$ref": "#/$defs/attachmentGroup"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attachmentGroup"
+          }
+        }
+      ]
     },
     "texture": {
       "type": "object",
@@ -26,10 +33,17 @@
           "$ref": "#/$defs/textureLayerBase"
         },
         "overlays": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/overlayGroup"
-          }
+          "oneOf": [
+            {
+              "$ref": "#/$defs/overlayGroup"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/overlayGroup"
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false
@@ -69,21 +83,28 @@
       ]
     },
     "attachmentMesh": {
-      "type": "object",
-      "required": [
-        "mesh"
-      ],
-      "properties": {
-        "mesh": {
+      "oneOf": [
+        {
           "$ref": "#/$defs/resourceLocation"
         },
-        "weight": {
-          "type": "number",
-          "minimum": 0,
-          "default": 1
+        {
+          "type": "object",
+          "required": [
+            "mesh"
+          ],
+          "properties": {
+            "mesh": {
+              "$ref": "#/$defs/resourceLocation"
+            },
+            "weight": {
+              "type": "number",
+              "minimum": 0,
+              "default": 1.0
+            }
+          },
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      ]
     },
     "attachmentGroup": {
       "type": "object",
@@ -102,8 +123,7 @@
               "items": {
                 "type": "string"
               },
-              "minItems": 1,
-              "uniqueItems": true
+              "minItems": 1
             }
           ]
         },
@@ -114,11 +134,18 @@
           "default": 1.0
         },
         "meshes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/attachmentMesh"
-          },
-          "minItems": 1
+          "oneOf": [
+            {
+              "$ref": "#/$defs/attachmentMesh"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/attachmentMesh"
+              },
+              "minItems": 1
+            }
+          ]
         }
       },
       "additionalProperties": false
@@ -126,37 +153,62 @@
     "textureLayerBase": {
       "type": "object",
       "required": [
-        "texture"
+        "textures"
       ],
       "properties": {
-        "texture": {
-          "$ref": "#/$defs/resourceLocation"
+        "textures": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/weightedTextureEntry"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/weightedTextureEntry"
+              },
+              "minItems": 1
+            }
+          ]
         },
         "colors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/colorEntry"
-          }
+          "oneOf": [
+            {
+              "$ref": "#/$defs/colorEntry"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/colorEntry"
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false
     },
-    "overlayTextureEntry": {
-      "type": "object",
-      "required": [
-        "texture"
-      ],
-      "properties": {
-        "texture": {
+    "weightedTextureEntry": {
+      "oneOf": [
+        {
           "$ref": "#/$defs/resourceLocation"
         },
-        "weight": {
-          "type": "number",
-          "minimum": 0,
-          "default": 1
+        {
+          "type": "object",
+          "required": [
+            "texture"
+          ],
+          "properties": {
+            "texture": {
+              "$ref": "#/$defs/resourceLocation"
+            },
+            "weight": {
+              "type": "number",
+              "minimum": 0,
+              "default": 1.0
+            }
+          },
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      ]
     },
     "overlayGroup": {
       "type": "object",
@@ -167,19 +219,12 @@
         "textures": {
           "oneOf": [
             {
-              "$ref": "#/$defs/resourceLocation"
+              "$ref": "#/$defs/weightedTextureEntry"
             },
             {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/resourceLocation"
-              },
-              "minItems": 1
-            },
-            {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/overlayTextureEntry"
+                "$ref": "#/$defs/weightedTextureEntry"
               },
               "minItems": 1
             }
@@ -202,10 +247,17 @@
           "default": "normal"
         },
         "colors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/colorEntry"
-          }
+          "oneOf": [
+            {
+              "$ref": "#/$defs/colorEntry"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/colorEntry"
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false

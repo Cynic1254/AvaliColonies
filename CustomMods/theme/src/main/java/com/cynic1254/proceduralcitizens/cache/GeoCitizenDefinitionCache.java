@@ -1,6 +1,9 @@
-package com.cynic1254.proceduralcitizens.data;
+package com.cynic1254.proceduralcitizens.cache;
 
 import com.cynic1254.proceduralcitizens.ProceduralCitizens;
+import com.cynic1254.proceduralcitizens.data.adapters.AttachmentMeshDeserializer;
+import com.cynic1254.proceduralcitizens.data.adapters.ListTypeAdapter;
+import com.cynic1254.proceduralcitizens.data.adapters.WeightedTextureDeserializer;
 import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,6 +16,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Collections;
@@ -26,6 +30,9 @@ public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener 
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .registerTypeAdapter(GeoCitizenDefinition.WeightedTexture.class, new WeightedTextureDeserializer())
+            .registerTypeAdapter(GeoCitizenDefinition.AttachmentMesh.class, new AttachmentMeshDeserializer())
+            .registerTypeAdapterFactory(new ListTypeAdapter())
             .create();
 
     private static Map<ResourceLocation, GeoCitizenDefinition> REGISTRY = new HashMap<>();
@@ -35,7 +42,7 @@ public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener 
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+    protected void apply(Map<ResourceLocation, JsonElement> pObject, @NotNull ResourceManager pResourceManager, @NotNull ProfilerFiller pProfiler) {
         Map<ResourceLocation, GeoCitizenDefinition> newRegistry = new HashMap<>();
 
         pObject.forEach((location, jsonElement) -> {

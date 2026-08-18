@@ -1,6 +1,5 @@
 package com.cynic1254.proceduralcitizens;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -22,7 +21,7 @@ public class ProceduralCitizens {
         modEventBus.addListener(this::commonSetup);
 
         // Register ourselves for server and other game interface events on the global Forge bus
-        MinecraftForge.EVENT_BUS.register(this);
+        modEventBus.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

@@ -1,9 +1,11 @@
-package com.cynic1254.proceduralcitizens.client.rendering.textures;
+package com.cynic1254.proceduralcitizens.cache;
 
-import com.cynic1254.proceduralcitizens.ProceduralCitizens;
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
+import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.BlendMode;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.TextureIdentifierObject;
+import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
+import com.cynic1254.proceduralcitizens.data.ResourcePathResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.logging.LogUtils;
@@ -20,20 +22,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TextureManager {
+public class CitizenTextureCache {
     private static final Map<TextureIdentifierDefinition, ResourceLocation> textureCache = new HashMap<>();
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final ResourceLocation defaultResource = ResourceLocation.fromNamespaceAndPath("minecraft", "missingno");
 
     public static ResourceLocation getTextureResource(AbstractEntityCitizen citizen) {
         var trueCitizen = (AbstractEntityCitizen & GeoAbstractEntityCitizen) citizen;
         TextureIdentifierDefinition textureID = trueCitizen.getTextureID();
 
         if (textureID == null) {
-            return defaultResource;
+            return CitizenDefaults.MISSINGNO_TEXTURE;
         }
 
-        return textureCache.computeIfAbsent(textureID, TextureManager::computeTextureResource);
+        return textureCache.computeIfAbsent(textureID, CitizenTextureCache::computeTextureResource);
     }
 
     public static void clearTextureCache() {
@@ -47,10 +48,7 @@ public class TextureManager {
         NativeImage bakedImage = bakeTexture(definition);
         DynamicTexture dynamicTexture = new DynamicTexture(bakedImage);
 
-        ResourceLocation dynamicLocation = ResourceLocation.fromNamespaceAndPath(
-                ProceduralCitizens.MODID,
-                "procedural/citizen/" + Math.abs(definition.hashCode())
-        );
+        ResourceLocation dynamicLocation = ResourcePathResolver.GetBakedTexturePath(definition);
 
         Minecraft.getInstance().getTextureManager().register(dynamicLocation, dynamicTexture);
         return dynamicLocation;
@@ -65,7 +63,7 @@ public class TextureManager {
 
         // Base Layer
         TextureIdentifierObject baseLayer = layers.get(0);
-        ResourceLocation basePath = resolveTexturePath(baseLayer.identifier());
+        ResourceLocation basePath = ResourcePathResolver.GetTexturePath(baseLayer.identifier());
         NativeImage canvas = loadNativeImage(basePath);
 
         if (canvas == null) {
@@ -80,7 +78,7 @@ public class TextureManager {
         // Overlay Layers (skip base layer index 0)
         for (int i = 1; i < layers.size(); i++) {
             TextureIdentifierObject overlayLayer = layers.get(i);
-            ResourceLocation overlayPath = resolveTexturePath(overlayLayer.identifier());
+            ResourceLocation overlayPath = ResourcePathResolver.GetTexturePath(overlayLayer.identifier());
             NativeImage overlayImage = loadNativeImage(overlayPath);
 
             if (overlayImage == null) {
@@ -193,16 +191,6 @@ public class TextureManager {
         int outA = (a * cA) / 255;
 
         return FastColor.ABGR32.color(outA, outB, outG, outR);
-    }
-
-    private static ResourceLocation resolveTexturePath(ResourceLocation id) {
-        if (id.getPath().startsWith("textures/")) {
-            return id;
-        }
-        return ResourceLocation.fromNamespaceAndPath(
-                id.getNamespace(),
-                "textures/citizen/" + id.getPath() + ".png"
-        );
     }
 
     private static NativeImage loadNativeImage(ResourceLocation location) {

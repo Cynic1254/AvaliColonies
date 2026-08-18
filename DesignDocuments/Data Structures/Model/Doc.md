@@ -1,14 +1,14 @@
 # Citizen Model & Texture Definition File Format
 
 > [!infobox] File Specification
-> **Base Directory:** `assets/<namespace>/citizens/`
+> **Base Directory:** `data/<namespace>/citizens/`
 > **Format:** JSON / Procedural Specification
 > **Minecraft Version:** 1.20.1
 > **Target System:** Dynamic Mesh & Layered Texture Engine
 
 A **Citizen Definition** file is a JSON file that defines the base geometry model, procedural bone attachments, and dynamic texture layering for a citizen or custom entity.
 
-Citizen files are placed within the `assets/<namespace>/citizens/` directory (e.g., `assets/yourmod/citizens/avali_default.json`).
+Citizen files are placed within the `data/<namespace>/citizens/` directory (e.g., `data/yourmod/citizens/avali_default.json`).
 
 ---
 
@@ -21,7 +21,7 @@ Citizen files are placed within the `assets/<namespace>/citizens/` directory (e.
 > | :--- | :--- | :---: | :--- | :--- |
 > | **Geo Model** | `geo/citizen/` | `.geo.json` | `"yourmod:wolf"` | `assets/yourmod/geo/citizen/wolf.geo.json` |
 > | **Attachment** | `geo/attachment/` | `.geo.json` | `"yourmod:floppy_ear"` | `assets/yourmod/geo/attachment/floppy_ear.geo.json` |
-> | **Texture** | `textures/citizen/` | `.png` | `"yourmod:wolf/base"` | `assets/yourmod/textures/citizen/wolf/base.png` |
+> | **Texture** | `textures/entity/citizen/` | `.png` | `"yourmod:wolf/base"` | `assets/yourmod/textures/entity/citizen/wolf/base.png` |
 
 > [!info]- Data Types Legend
 > * **`<resourceLocation>`**: Minecraft Identifier string using short-path conventions (`"namespace:relative_path"`).
@@ -34,25 +34,27 @@ Citizen files are placed within the `assets/<namespace>/citizens/` directory (e.
 
 A citizen definition file consists of a single root JSON object containing the following keys:
 
-| Key           |         Type         |  Default   | Description                                                                  |
-| :------------ | :------------------: | :--------: | :--------------------------------------------------------------------------- |
-| `model`       | `<resourceLocation>` | *Required* | Identifier of the base geometry model (resolves relative to `geo/citizen/`). |
-| `attachments` |   List of Objects    |    `[]`    | Optional list of bone attachment groups used for procedural mesh generation. |
-| `texture`     |        Object        | *Required* | Defines the base texture and procedural overlay pipeline.                    |
+| Key           |                    Type                     |  Default   | Description                                                                  |
+| :------------ | :-----------------------------------------: | :--------: | :--------------------------------------------------------------------------- |
+| `model`       |            `<resourceLocation>`             | *Required* | Identifier of the base geometry model (resolves relative to `geo/citizen/`). |
+| `attachments` | Object \| List of Attachment Groups         |    `[]`    | Optional single attachment group or list of attachment groups.               |
+| `texture`     |                   Object                    | *Required* | Defines the base texture and procedural overlay pipeline.                    |
 
 ---
 
 ### `attachments`
 
-Each object in the `attachments` array defines a set of potential mesh additions attached to target bones on the base model skeleton.
+Defines mesh additions attached to target bones on the base model skeleton. Can be defined as a single object or a list of objects.
 
-| Key | Type | Default | Bounds | Description |
-| :--- | :---: | :---: | :---: | :--- |
-| `bone` | String \| List of Strings | *Required* | — | Target bone name (or list of bone names) in the base model. |
-| `chance` | Float | `1.0` | $P \in [0.0, 1.0]$ | Probability that this attachment group executes. |
-| `meshes` | List of Objects | *Required* | — | List of potential mesh choices to attach. |
+| Key      |                  Type                  |  Default   |       Bounds       | Description                                                             |
+| :------- | :------------------------------------: | :--------: | :----------------: | :---------------------------------------------------------------------- |
+| `bone`   |       String \| List of Strings        | *Required* |         —          | Target bone name (or list of bone names) in the base model.             |
+| `chance` |                 Float                  |   `1.0`    | $P \in [0.0, 1.0]$ | Probability that this attachment group executes for a bone in the list. |
+| `meshes` | `<resourceLocation>` \| Object \| List | *Required* |         —          | Single mesh identifier, single mesh object, or list of mesh choices.    |
 
-#### `attachments[].meshes`
+#### `attachments.meshes` Elements / Objects
+
+Meshes can be simplified to a single resource location string (implicitly weight `1.0`) or defined as an explicit object:
 
 | Key | Type | Default | Bounds | Description |
 | :--- | :---: | :---: | :---: | :--- |
@@ -68,45 +70,47 @@ The `texture` object configures how the entity's dynamic texture is composited a
 | Key | Type | Default | Description |
 | :--- | :---: | :---: | :--- |
 | `base` | Base Layer Object | *Required* | The foundation texture layer. |
-| `overlays` | List of Overlay Groups | `[]` | Sequential list of mutually exclusive overlay groups. |
+| `overlays` | Overlay Group \| List of Overlay Groups | `[]` | Single overlay group or list of sequential overlay groups. |
 
 ---
 
 ### Base Texture Layer (`texture.base`)
 
-| Key       |         Type          |  Default   | Description                                                                   |
-| :-------- | :-------------------: | :--------: | :---------------------------------------------------------------------------- |
-| `texture` | `<resourceLocation>`  | *Required* | Base PNG texture identifier (resolves relative to `textures/citizen/`).       |
-| `colors`  | List of Color Entries |    `[]`    | Optional list of single colors or color ranges used to tint the base texture. |
+| Key        |                       Type                       |  Default   | Description                                                                   |
+| :--------- | :----------------------------------------------: | :--------: | :---------------------------------------------------------------------------- |
+| `textures` | `<resourceLocation>` \| Object \| List           | *Required* | Single texture string, single weighted object, or list of textures.          |
+| `colors`   | Color Entry \| List of Color Entries             |    `[]`    | Optional color entry or list of color entries used to tint the base layer.    |
 
 ---
 
-### Overlay Groups (`texture.overlays[]`)
+### Overlay Groups (`texture.overlays`)
 
-Each overlay group defines layer-wide behavior (`chance`, `blend_mode`, `colors`) and a set of candidate textures (`textures`) where **exactly one** texture is picked if the group passes its chance roll.
+Each overlay group defines layer-wide behavior (`chance`, `blend_mode`, `colors`) and candidate textures (`textures`) where **exactly one** texture is picked if the group passes its chance roll. Can be provided as a single group object or a list of group objects.
 
-| Key          |                                  Type                                   |  Default   |                   Bounds / Values                    | Description                                                                   |
-| :----------- | :---------------------------------------------------------------------: | :--------: | :--------------------------------------------------: | :---------------------------------------------------------------------------- |
-| `textures`   | `<resourceLocation>` \| List of `<resourceLocation>` \| List of Objects | *Required* |                          —                           | Single texture identifier, array of identifiers, or weighted texture objects. |
-| `chance`     |                                  Float                                  |   `1.0`    |                  $P \in [0.0, 1.0]$                  | Probability of applying this overlay group.                                   |
-| `blend_mode` |                                 String                                  | `"normal"` | `"normal"` \| `"multiply"` \| `"add"` \| `"overlay"` | Blending mode used during alpha compositing.                                  |
-| `colors`     |                          List of Color Entries                          |    `[]`    |                          —                           | List of single colors or color ranges used to tint the selected texture.      |
+| Key          |                             Type                              |  Default   |                   Bounds / Values                    | Description                                                                   |
+| :----------- | :-----------------------------------------------------------: | :--------: | :--------------------------------------------------: | :---------------------------------------------------------------------------- |
+| `textures`   |            `<resourceLocation>` \| Object \| List             | *Required* |                          —                           | Single texture identifier, single object, or array of strings/objects.        |
+| `chance`     |                             Float                             |   `1.0`    |                  $P \in [0.0, 1.0]$                  | Probability of applying this overlay group.                                   |
+| `blend_mode` |                            String                             | `"normal"` | `"normal"` \| `"multiply"` \| `"add"` \| `"overlay"` | Blending mode used during alpha compositing.                                  |
+| `colors`     |              Color Entry \| List of Color Entries             |    `[]`    |                          —                           | Single color or list of colors used to tint the selected texture.             |
 
-#### `texture.overlays[].textures` (When using Weighted Objects)
+#### `textures` Weighted Format (When using Objects)
 
-| Key | Type | Default | Bounds | Description |
-| :--- | :---: | :---: | :---: | :--- |
-| `texture` | `<resourceLocation>` | *Required* | — | Identifier of the overlay PNG file. |
-| `weight` | Float | `1.0` | $W \ge 0.0$ | Selection weight when picking a texture from this group. |
+If provided as an object instead of a direct string, weights can be customized:
+
+| Key       |         Type         |  Default   |   Bounds    | Description                                                                                                                                                                                              |
+| :-------- | :------------------: | :--------: | :---------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `texture` | `<resourceLocation>` | *Required* |      —      | Identifier of the overlay PNG file (defaults relative to `textures/entity/citizen/`, if the ID starts with `textures/` or end with `.png` the path is resolved relative to the root `assets` directory). |
+| `weight`  |        Float         |   `1.0`    | $W \ge 0.0$ | Selection weight when picking a texture from this group.                                                                                                                                                 |
 
 ---
 
 ### Color Entry
 
-An item in the `colors` array can be represented in one of two formats:
+A color entry can be provided as a single item or inside a list:
 
 1. **Fixed Color:** A string containing a 6-digit or 8-digit Hex code (`"#RRGGBB"` or `"#AARRGGBB"`).
-2. **Color Range Object:** An object defining a minimum and maximum color range to randomly interpolate between:
+2. **Color Range Object:** An object defining a minimum and maximum color range:
 
 | Key | Type | Default | Description |
 | :--- | :---: | :---: | :--- |
@@ -131,16 +135,17 @@ An item in the `colors` array can be represented in one of two formats:
 >           "mesh": "yourmod:floppy_ear",
 >           "weight": 3.0
 >         },
->         {
->           "mesh": "yourmod:pointed_ear",
->           "weight": 1.0
->         }
+>         "yourmod:pointed_ear"
 >       ]
+>     },
+>     {
+>       "bone": "tail",
+>       "meshes": "yourmod:fluffy_tail"
 >     }
 >   ],
 >   "texture": {
 >     "base": {
->       "texture": "yourmod:avali/base",
+>       "textures": "yourmod:avali/base",
 >       "colors": [
 >         "#FFFFFF",
 >         {
@@ -158,22 +163,15 @@ An item in the `colors` array can be represented in one of two formats:
 >             "texture": "yourmod:avali/stripes_thick",
 >             "weight": 2.0
 >           },
->           {
->             "texture": "yourmod:avali/stripes_thin",
->             "weight": 1.0
->           }
+>           "yourmod:avali/stripes_thin"
 >         ],
->         "colors": [
->           "#332211"
->         ]
+>         "colors": "#332211"
 >       },
 >       {
 >         "chance": 0.3,
 >         "blend_mode": "add",
 >         "textures": "yourmod:avali/glowing_warpaint",
->         "colors": [
->           "#00FFCC"
->         ]
+>         "colors": "#00FFCC"
 >       }
 >     ]
 >   }

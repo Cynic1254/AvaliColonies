@@ -2,7 +2,7 @@ package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
-import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenRenderer;
+import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenAttachmentModel;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;

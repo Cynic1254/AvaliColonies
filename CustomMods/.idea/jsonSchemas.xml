@@ -17,6 +17,9 @@
                   <Item>
                     <option name="path" value="theme/src/main/resources/data/avali_theme/citizens/default.json" />
                   </Item>
+                  <Item>
+                    <option name="path" value="theme/src/main/resources/data/procedural_citizens/citizens/default.json" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
