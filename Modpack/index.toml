@@ -57,7 +57,7 @@ metafile = true
 
 [[files]]
 file = "mods/procedural_citizens.pw.toml"
-hash = "3b6d92d8fa7786c83962d25f90751aea287b0f152ee3bb0ce12202beec7bbfd0"
+hash = "cc5be83bea1f1ceb491bbfcb230039dfc6e3130e08696ec864695a4d2c1c2637"
 metafile = true
 
 [[files]]
