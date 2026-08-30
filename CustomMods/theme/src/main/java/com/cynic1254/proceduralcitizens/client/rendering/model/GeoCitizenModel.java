@@ -9,8 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GeoCitizenModel extends DefaultedEntityGeoModel<GeoCitizenAnimatable> {
 
@@ -18,7 +17,7 @@ public class GeoCitizenModel extends DefaultedEntityGeoModel<GeoCitizenAnimatabl
     private static final GeoCitizenModel FALLBACK_MODEL = new GeoCitizenModel(CitizenDefaults.EMPTY_MODEL_ID);
 
     public GeoCitizenModel(GeoCitizenDefinition definition) {
-        super(definition.model(), true);
+        this(definition.model());
     }
 
     private GeoCitizenModel(ResourceLocation model) {

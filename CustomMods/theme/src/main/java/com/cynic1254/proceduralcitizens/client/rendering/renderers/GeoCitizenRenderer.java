@@ -2,6 +2,7 @@ package com.cynic1254.proceduralcitizens.client.rendering.renderers;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
+import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenArmorLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenAttachmentLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenItemGeoLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
@@ -22,6 +23,7 @@ public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntity
 
         addRenderLayer(new CitizenItemGeoLayer(this));
         addRenderLayer(new CitizenAttachmentLayer(this));
+        addRenderLayer(new CitizenArmorLayer(this));
     }
 
     @Override

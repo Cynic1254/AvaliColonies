@@ -6,11 +6,16 @@ import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentif
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
 public record GeoCitizenDefinition(
         ResourceLocation model,
+        ResourceLocation armorTexture,
         List<AttachmentGroup> attachments,
         TexturePipeline texture
 ) {
@@ -43,6 +48,40 @@ public record GeoCitizenDefinition(
         return TextureIdentifierDefinition.fromObjects(objects);
     }
 
+    public ResourceLocation getTextureForMaterialAndSlot(ItemStack stack, EquipmentSlot slot) {
+        if (!(stack.getItem() instanceof ArmorItem armorItem)) {
+            // Default fallback texture if stack isn't valid armor
+            return CitizenDefaults.MISSINGNO_TEXTURE;
+        }
+
+        return getTextureForMaterialAndSlot(armorItem.getMaterial(), slot);
+    }
+
+    public ResourceLocation getTextureForMaterialAndSlot(ArmorMaterial material, EquipmentSlot slot) {
+        int layer = (slot == EquipmentSlot.LEGS) ? 2 : 1;
+        String materialName = material.getName();
+
+        if (armorTexture != null) {
+            materialName = materialName.replace(':', '_');
+            return ResourceLocation.fromNamespaceAndPath(
+                    armorTexture.getNamespace(),
+                    armorTexture.getPath() + "/" + materialName + "_layer_" + layer + ".png"
+            );
+        }
+
+        if (materialName.contains(":")) {
+            String[] parts = materialName.split(":", 2);
+            return ResourceLocation.fromNamespaceAndPath(
+                    parts[0],
+                    "textures/models/armor/" + parts[1] + "_layer_" + layer + ".png"
+            );
+        }
+
+        return ResourceLocation.fromNamespaceAndPath(
+                "minecraft",
+                "textures/models/armor/" + materialName + "_layer_" + layer + ".png"
+        );
+    }
 
     public record AttachmentGroup(
             // Can be parsed from either a String or List<String>

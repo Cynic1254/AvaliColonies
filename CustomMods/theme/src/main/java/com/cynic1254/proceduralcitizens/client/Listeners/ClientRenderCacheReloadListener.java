@@ -1,6 +1,7 @@
 package com.cynic1254.proceduralcitizens.client.Listeners;
 
 import com.cynic1254.proceduralcitizens.ProceduralCitizens;
+import com.cynic1254.proceduralcitizens.cache.CitizenArmorCache;
 import com.cynic1254.proceduralcitizens.cache.CitizenPackMetaCache;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenAttachmentModel;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
@@ -32,5 +33,6 @@ public class ClientRenderCacheReloadListener extends SimplePreparableReloadListe
         GeoCitizenModel.clearCache();
         GeoCitizenAttachmentModel.clearCache();
         CitizenPackMetaCache.clearMetaCache();
+        CitizenArmorCache.ClearCache();
     }
 }
