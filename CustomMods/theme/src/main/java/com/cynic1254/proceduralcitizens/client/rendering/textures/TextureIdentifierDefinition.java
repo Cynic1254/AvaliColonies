@@ -8,7 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/// Helper class for parsing a textureID string into a more usable data format, for serialization purposes this class is just a string but for implementation this is converted to a more usable data structure
+/// @param textureID the string for the specific texture ID
 public record TextureIdentifierDefinition(String textureID) {
+    /// Convert the textureID string into a list of TextureIdentifierObject's
+    /// @return a list of TextureIdentifierObject parsed from the textureID
     public List<TextureIdentifierObject> toObjects() {
         if (textureID == null || textureID.isBlank()) {
             return List.of();
@@ -20,6 +24,9 @@ public record TextureIdentifierDefinition(String textureID) {
                 .toList();
     }
 
+    /// Convert a list of TextureIdentifierObject back into a string
+    /// @param objects a list of TextureIdentifierObject
+    /// @return a TextureIdentifierDefinition which effectively is just a string
     public static TextureIdentifierDefinition fromObjects(List<TextureIdentifierObject> objects) {
         if (objects == null || objects.isEmpty()) {
             return new TextureIdentifierDefinition("");
@@ -32,6 +39,7 @@ public record TextureIdentifierDefinition(String textureID) {
         return new TextureIdentifierDefinition(joined);
     }
 
+    /// enum to describe the blendmode to use when overlaying the different TextureIdentifierObject
     public enum BlendMode {
         NORMAL,
         MULTIPLY,

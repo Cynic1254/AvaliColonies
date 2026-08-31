@@ -16,6 +16,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
+/// Renderer for Citizen and visitor entities, this renderer is used for all models defined through CitizenDefinitions
 public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntityCitizen, GeoCitizenAnimatable> {
     public GeoCitizenRenderer(EntityRendererProvider.Context context, GeoCitizenAnimatable animatable) {
         super(context, new DefaultedEntityGeoModel<>(CitizenDefaults.MISSING_MODEL_ID, "Head"), animatable);
@@ -26,16 +27,21 @@ public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntity
         addRenderLayer(new CitizenArmorLayer(this));
     }
 
+    /// Get the model of the entity currently being rendered
+    /// @return the GeoCitizenModel of the entity currently being rendered
     @Override
     public GeoModel<GeoCitizenAnimatable> getGeoModel() {
         var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen)getCurrentEntity();
         return GeoCitizenModel.getOrCreateModel(entity.getModelId());
     }
 
+    /// convenient class to cast the returned model from a generic GeoModel to a GeoCitizenModel
     public GeoCitizenModel getCitizenModel() {
         return (GeoCitizenModel) getGeoModel();
     }
 
+    /// Fetch the Texture ID of the entity currently being rendered
+    /// @return the Texture ID of the entity currently being rendered
     @Override
     public ResourceLocation getTextureLocation(GeoCitizenAnimatable animatable) {
         return CitizenTextureCache.getTextureResource(getCurrentEntity());

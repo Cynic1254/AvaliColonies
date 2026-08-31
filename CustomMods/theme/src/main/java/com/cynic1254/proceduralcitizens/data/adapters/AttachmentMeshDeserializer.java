@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Type;
 
+/// Deserializer class for attachment mesh json objects
 public class AttachmentMeshDeserializer implements JsonDeserializer<AttachmentMesh> {
     @Override
     public AttachmentMesh deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

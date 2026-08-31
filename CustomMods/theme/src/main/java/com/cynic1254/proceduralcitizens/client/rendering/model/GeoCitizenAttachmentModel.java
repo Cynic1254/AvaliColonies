@@ -9,6 +9,7 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import java.util.HashMap;
 import java.util.Map;
 
+/// GeoModel representing an attachment model onto a citizen model
 public class GeoCitizenAttachmentModel extends DefaultedGeoModel<GeoCitizenAnimatable> {
 
     private static final Map<String, GeoCitizenAttachmentModel> attachmentCache = new HashMap<>();
@@ -23,11 +24,13 @@ public class GeoCitizenAttachmentModel extends DefaultedGeoModel<GeoCitizenAnima
         );
     }
 
+    /// No animations are supported for attachments, we just use the citizen models for movement
     @Override
     public ResourceLocation getAnimationResource(GeoCitizenAnimatable animatable) {
         return null;
     }
 
+    /// we use the same texture as the citizen
     @Override
     public ResourceLocation getTextureResource(GeoCitizenAnimatable animatable, @Nullable GeoRenderer<GeoCitizenAnimatable> renderer) {
         if (renderer == null)
@@ -36,6 +39,7 @@ public class GeoCitizenAttachmentModel extends DefaultedGeoModel<GeoCitizenAnima
         return renderer.getTextureLocation(renderer.getAnimatable());
     }
 
+    /// attachment models should be stored in geo/attachment
     @Override
     protected String subtype() {
         return "attachment";

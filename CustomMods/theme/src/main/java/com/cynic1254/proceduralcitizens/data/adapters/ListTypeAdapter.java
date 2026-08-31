@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/// adapter for list types, this adapter specifically allows the list to be omitted and instead a single object can be provided
 public class ListTypeAdapter implements TypeAdapterFactory {
 
     @Override

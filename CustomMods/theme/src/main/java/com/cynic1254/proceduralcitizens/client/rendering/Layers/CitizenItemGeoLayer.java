@@ -14,6 +14,7 @@ import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 
 import java.util.Objects;
 
+/// Render layer for rendering held items into a citizen's hand
 public class CitizenItemGeoLayer extends BlockAndItemGeoLayer<GeoCitizenAnimatable> {
     static final private float itemScale = 0.625f;
 

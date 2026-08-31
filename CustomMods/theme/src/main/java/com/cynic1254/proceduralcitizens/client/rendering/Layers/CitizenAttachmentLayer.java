@@ -15,6 +15,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
+/// Render layer for rendering various attachments onto citizens
 public class CitizenAttachmentLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
     public CitizenAttachmentLayer(GeoCitizenRenderer entityRendererIn) {
         super(entityRendererIn);

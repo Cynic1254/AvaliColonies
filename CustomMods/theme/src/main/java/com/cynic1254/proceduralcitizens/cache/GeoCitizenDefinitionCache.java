@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/// Cache class for loading and caching Citizen Definitions
 @Mod.EventBusSubscriber(modid = ProceduralCitizens.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();

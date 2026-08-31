@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
+/// Reload listener for client-side resource reloads, primarily used for cache clearing
 @Mod.EventBusSubscriber(modid = ProceduralCitizens.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRenderCacheReloadListener extends SimplePreparableReloadListener<Void> {
     @SubscribeEvent

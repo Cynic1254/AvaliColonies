@@ -9,6 +9,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+/// animatable object for the citizen models
 public class GeoCitizenAnimatable implements GeoReplacedEntity {
 
     private final EntityType<? extends AbstractEntityCitizen> entityType;

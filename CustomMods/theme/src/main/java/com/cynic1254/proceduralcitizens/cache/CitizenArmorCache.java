@@ -12,6 +12,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/// Cache class for storing a map of all Armor bones that are part of a specific model.
+/// This can be used to prevent having to loop over all the bones every render pass.
+/// Each instance of this class represents the bones of a single BakedGeoModel.
 public class CitizenArmorCache {
     private static final Map<ResourceLocation, CitizenArmorCache> MODELS = new ConcurrentHashMap<>();
 
@@ -31,6 +34,10 @@ public class CitizenArmorCache {
         }
     }
 
+    /// Get a specific cache for a given model, model and animatable are used to calculate the resource location using `model.getModelResource(animatable)`
+    /// @param model the model to get the cache for
+    /// @param animatable the animatable to get the cache for
+    /// @return an instance of CitizenArmorCache for the specific Model, an empty instance will be returned if the cache failed to bake the model, in this case no cache entry will be generated to allow future lookups to properly generate the entry
     public static CitizenArmorCache getCacheForModel(GeoCitizenModel model, GeoCitizenAnimatable animatable) {
         CitizenArmorCache armorCache = MODELS.computeIfAbsent(model.getModelResource(animatable), loc -> {
             var bakedModel = GeckoLibCache.getBakedModels().get(loc);
@@ -40,10 +47,15 @@ public class CitizenArmorCache {
         return armorCache != null ? armorCache : new CitizenArmorCache();
     }
 
+    /// Get all the bones for a specific armor slot
+    /// @param slot the slot to get the bones for
+    /// @return a Set of GeoBones where each bone of the set is the root of a chain for rendering a piece of the armor
     public Set<GeoBone> GetBonesForSlot(EquipmentSlot slot) {
         return bones.getOrDefault(slot, Collections.emptySet());
     }
 
+    /// Get all the bones cached for a specific model
+    /// @return a flattened set of GeoBones where each bone of the set is the root of a chain for rendering a piece of the armor
     public Set<GeoBone> GetAllBones() {
         return bones.values().stream()
                 .flatMap(Collection::stream)

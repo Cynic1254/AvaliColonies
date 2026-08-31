@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/// encoder class for converting a string to a Map of attachments and vise versa
 public class CitizenAttachmentEncoding {
     private CitizenAttachmentEncoding() {}
 

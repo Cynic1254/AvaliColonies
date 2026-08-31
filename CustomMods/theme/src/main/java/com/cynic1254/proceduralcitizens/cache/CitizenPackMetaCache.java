@@ -16,12 +16,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/// Cache class for caching the WeightedDefinition field stored in a minecolonies pack.json file
 public class CitizenPackMetaCache {
     private static final Gson GSON = new Gson();
     private static final Map<String, List<WeightedDefinition>> CACHE = new ConcurrentHashMap<>();
 
+    /// Single WeightedDefinition entry which describes a single model and the weight it has in relation to other definitions
+    /// @param modelID the ResourceLocation of the model
+    /// @param weight the weight to use when rolling for a model
     public record WeightedDefinition(ResourceLocation modelID, float weight) {}
 
+    /// Get the weighted definitions for a specific pack file
+    /// @param packName the name of the pack file to get the definitions from
+    /// @return a list of `WeightedDefinition's`
     public static List<WeightedDefinition> getDefinitions(String packName)
     {
         return CACHE.computeIfAbsent(packName, CitizenPackMetaCache::load);

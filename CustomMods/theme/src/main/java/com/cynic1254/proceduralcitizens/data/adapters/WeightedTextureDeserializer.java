@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Type;
 
+/// Deserializer for Weighted Texture Json objects
 public class WeightedTextureDeserializer implements JsonDeserializer<WeightedTexture> {
     @Override
     public WeightedTexture deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -22,10 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/// Class for generating and caching procedural textures for citizens, the textures are generated according to the `TextureIdentifierDefinition`
 public class CitizenTextureCache {
     private static final Map<TextureIdentifierDefinition, ResourceLocation> textureCache = new HashMap<>();
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    /// Get the texture resource for the provided citizen entity
+    /// @param citizen the citizen to get the texture resource for
+    /// @return the ResourceLocation of the texture
     public static ResourceLocation getTextureResource(AbstractEntityCitizen citizen) {
         var trueCitizen = (AbstractEntityCitizen & GeoAbstractEntityCitizen) citizen;
         TextureIdentifierDefinition textureID = trueCitizen.getTextureID();

@@ -17,6 +17,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+/// Render layer for rendering armor onto a citizen
 public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
 
     private CitizenArmorCache currentCache = null;
