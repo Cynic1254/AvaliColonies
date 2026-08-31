@@ -67,7 +67,7 @@ public class CitizenTextureCache {
 
         // Base Layer
         TextureIdentifierObject baseLayer = layers.get(0);
-        ResourceLocation basePath = ResourcePathResolver.GetTexturePath(baseLayer.identifier());
+        ResourceLocation basePath = ResourcePathResolver.GetCitizenTexturePath(baseLayer.identifier());
         NativeImage canvas = loadNativeImage(basePath);
 
         if (canvas == null) {
@@ -82,7 +82,7 @@ public class CitizenTextureCache {
         // Overlay Layers (skip base layer index 0)
         for (int i = 1; i < layers.size(); i++) {
             TextureIdentifierObject overlayLayer = layers.get(i);
-            ResourceLocation overlayPath = ResourcePathResolver.GetTexturePath(overlayLayer.identifier());
+            ResourceLocation overlayPath = ResourcePathResolver.GetCitizenTexturePath(overlayLayer.identifier());
             NativeImage overlayImage = loadNativeImage(overlayPath);
 
             if (overlayImage == null) {

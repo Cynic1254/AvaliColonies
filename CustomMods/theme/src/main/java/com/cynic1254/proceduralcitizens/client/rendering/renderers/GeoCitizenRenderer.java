@@ -4,6 +4,7 @@ import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenArmorLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenAttachmentLayer;
+import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenClothingLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.Layers.CitizenItemGeoLayer;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
 import com.cynic1254.proceduralcitizens.cache.CitizenTextureCache;
@@ -25,6 +26,7 @@ public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntity
         addRenderLayer(new CitizenItemGeoLayer(this));
         addRenderLayer(new CitizenAttachmentLayer(this));
         addRenderLayer(new CitizenArmorLayer(this));
+        addRenderLayer(new CitizenClothingLayer(this));
     }
 
     /// Get the model of the entity currently being rendered

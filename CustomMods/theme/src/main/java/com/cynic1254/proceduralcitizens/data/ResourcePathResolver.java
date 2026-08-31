@@ -12,13 +12,23 @@ public class ResourcePathResolver {
         );
     }
 
-    public static ResourceLocation GetTexturePath(ResourceLocation id) {
+    public static ResourceLocation GetClothingTextureFolderPath(ResourceLocation id) {
+        if (id.getPath().startsWith("textures/")) {
+            return id;
+        }
+        return ResourceLocation.fromNamespaceAndPath(
+                id.getNamespace(),
+                "textures/entity/citizen/job/" + id.getPath() + "/"
+        );
+    }
+
+    public static ResourceLocation GetCitizenTexturePath(ResourceLocation id) {
         if (id.getPath().startsWith("textures/") || id.getPath().endsWith(".png")) {
             return id;
         }
         return ResourceLocation.fromNamespaceAndPath(
                 id.getNamespace(),
-                "textures/entity/citizen/" + id.getPath() + ".png"
+                "textures/entity/citizen/base/" + id.getPath() + ".png"
         );
     }
 }

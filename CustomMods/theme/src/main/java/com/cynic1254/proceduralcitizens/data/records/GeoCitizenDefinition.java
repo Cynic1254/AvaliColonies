@@ -4,7 +4,10 @@ import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentif
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.TextureIdentifierObject;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition.BlendMode;
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
+import com.cynic1254.proceduralcitizens.data.ResourcePathResolver;
 import com.google.gson.annotations.SerializedName;
+import com.minecolonies.api.colony.jobs.IJob;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
@@ -16,6 +19,7 @@ import java.util.*;
 public record GeoCitizenDefinition(
         ResourceLocation model,
         ResourceLocation armorTexture,
+        ResourceLocation clothingTextures,
         List<AttachmentGroup> attachments,
         TexturePipeline texture
 ) {
@@ -48,13 +52,30 @@ public record GeoCitizenDefinition(
         return TextureIdentifierDefinition.fromObjects(objects);
     }
 
-    public ResourceLocation getTextureForMaterialAndSlot(ItemStack stack, EquipmentSlot slot) {
+    public ResourceLocation getClothingTextureForJob(IJob<?> job) {
+        ResourceLocation textureLocation = ResourcePathResolver.GetClothingTextureFolderPath(clothingTextures == null ? model : clothingTextures);
+        ResourceLocation fallbackLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), textureLocation.getPath() + "default.png");
+        fallbackLocation = Minecraft.getInstance().getResourceManager().getResource(fallbackLocation).isPresent() ? fallbackLocation : null;
+
+        if (job == null) {
+            return fallbackLocation;
+        }
+
+        String relativePath = job.getJobRegistryEntry().getKey().toString().replace(':', '_') + ".png";
+        ResourceLocation finalLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), textureLocation.getPath() + relativePath);
+
+        boolean textureExists = Minecraft.getInstance().getResourceManager().getResource(finalLocation).isPresent();
+
+        return textureExists ? finalLocation : fallbackLocation;
+    }
+
+    public ResourceLocation getTextureForMaterialAndSlot(ItemStack stack) {
         if (!(stack.getItem() instanceof ArmorItem armorItem)) {
             // Default fallback texture if stack isn't valid armor
             return CitizenDefaults.MISSINGNO_TEXTURE;
         }
 
-        return getTextureForMaterialAndSlot(armorItem.getMaterial(), slot);
+        return getTextureForMaterialAndSlot(armorItem.getMaterial(), armorItem.getEquipmentSlot());
     }
 
     public ResourceLocation getTextureForMaterialAndSlot(ArmorMaterial material, EquipmentSlot slot) {

@@ -52,7 +52,7 @@ public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
             if (armorBone == null)
                 continue;
 
-            ResourceLocation armorTexture = definition.get().getTextureForMaterialAndSlot(stack, slot);
+            ResourceLocation armorTexture = definition.get().getTextureForMaterialAndSlot(stack);
             RenderType armorRenderType = RenderType.entityCutoutNoCull(armorTexture);
             VertexConsumer armorBuffer = bufferSource.getBuffer(armorRenderType);
 

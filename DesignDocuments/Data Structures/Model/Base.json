@@ -1,5 +1,6 @@
 {
   "model": "<resourceLocation>",
+  "armorTexture": "<resourceLocation>",
   "attachments": [
     {
       "bone": "<string | array[string]>",
