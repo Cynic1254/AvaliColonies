@@ -1,7 +1,7 @@
 package com.cynic1254.proceduralcitizens.data.adapters;
 
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
-import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition.WeightedTexture;
+import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition.WeightedTexture;
 import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
 

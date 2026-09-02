@@ -1,14 +1,19 @@
 {
   "model": "<resourceLocation>",
-  "armorTexture": "<resourceLocation>",
-  "attachments": [
-    {
-      "bone": "<string | array[string]>",
-      "chance": "<number: 0.0-1.0 (optional, default 1.0)>",
-      "meshes": "<resourceLocation | object | array[resourceLocation | object]>"
+  "bones": {
+    "head": "<string>",
+    "left_hand": "<string>",
+    "right_hand": "<string>",
+    "armor": {
+      "head": "<string | array[string]>",
+      "chest": "<string | array[string]>",
+      "legs": "<string | array[string]>",
+      "feet": "<string | array[string]>"
     }
-  ],
-  "texture": {
+  },
+  "textures": {
+    "armor_override_path": "<resourceLocation (optional)>",
+    "clothing_override_path": "<resourceLocation (optional)>",
     "base": {
       "textures": "<resourceLocation | object | array[resourceLocation | object]>",
       "colors": [
@@ -33,5 +38,41 @@
         ]
       }
     ]
-  }
+  },
+  "attachments": [
+    {
+      "name": "<string (optional)>",
+      "chance": "<number: 0.0-1.0 (optional, default 1.0)>",
+      "exclusive": "<boolean (optional, default true)>",
+      "visibility_rules": {
+        "hide_on_armor_slots": [
+          "<string: 'head' | 'chest' | 'legs' | 'feet'>"
+        ],
+        "hide_on_jobs": [
+          "<jobRegistryId (e.g., 'minecolonies:miner')>"
+        ],
+        "show_on_jobs": [
+          "<jobRegistryId (e.g., 'minecolonies:guard')>"
+        ]
+      },
+      "options": [
+        {
+          "name": "<string (optional)>",
+          "bone": "<string | array[string]>",
+          "weight": "<number: >0.0 (optional, default 1.0)>",
+          "visibility_rules": {
+            "hide_on_armor_slots": [
+              "<string: 'head' | 'chest' | 'legs' | 'feet'>"
+            ],
+            "hide_on_jobs": [
+              "<jobRegistryId>"
+            ],
+            "show_on_jobs": [
+              "<jobRegistryId>"
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

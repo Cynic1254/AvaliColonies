@@ -4,34 +4,70 @@
   "type": "object",
   "required": [
     "model",
-    "texture"
+    "bones",
+    "textures"
   ],
   "properties": {
     "model": {
       "$ref": "#/$defs/resourceLocation"
     },
-    "armorTexture": {
-      "$ref": "#/$defs/resourceLocation"
-    },
-    "attachments": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/attachmentGroup"
+    "bones": {
+      "type": "object",
+      "required": [
+        "head",
+        "left_hand",
+        "right_hand",
+        "armor"
+      ],
+      "properties": {
+        "head": {
+          "type": "string"
         },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/attachmentGroup"
-          }
+        "left_hand": {
+          "type": "string"
+        },
+        "right_hand": {
+          "type": "string"
+        },
+        "armor": {
+          "type": "object",
+          "required": [
+            "head",
+            "chest",
+            "legs",
+            "feet"
+          ],
+          "properties": {
+            "head": {
+              "$ref": "#/$defs/stringOrStringArray"
+            },
+            "chest": {
+              "$ref": "#/$defs/stringOrStringArray"
+            },
+            "legs": {
+              "$ref": "#/$defs/stringOrStringArray"
+            },
+            "feet": {
+              "$ref": "#/$defs/stringOrStringArray"
+            }
+          },
+          "additionalProperties": false
         }
-      ]
+      },
+      "additionalProperties": false
     },
-    "texture": {
+    "textures": {
       "type": "object",
       "required": [
         "base"
       ],
       "properties": {
+        "armor_override_path": {
+          "$ref": "#/$defs/resourceLocation"
+        },
+        "clothing_override_path": {
+          "$ref": "#/$defs/resourceLocation"
+        },
         "base": {
           "$ref": "#/$defs/textureLayerBase"
         },
@@ -50,6 +86,12 @@
         }
       },
       "additionalProperties": false
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attachmentGroup"
+      }
     }
   },
   "additionalProperties": false,
@@ -61,6 +103,104 @@
     "hexColor": {
       "type": "string",
       "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$"
+    },
+    "stringOrStringArray": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "visibilityRules": {
+      "type": "object",
+      "properties": {
+        "hide_on_armor_slots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "head",
+              "chest",
+              "legs",
+              "feet"
+            ]
+          }
+        },
+        "hide_on_jobs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "show_on_jobs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "attachmentOption": {
+      "type": "object",
+      "required": [
+        "bone"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "bone": {
+          "$ref": "#/$defs/stringOrStringArray"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 1.0
+        },
+        "visibility_rules": {
+          "$ref": "#/$defs/visibilityRules"
+        }
+      },
+      "additionalProperties": false
+    },
+    "attachmentGroup": {
+      "type": "object",
+      "required": [
+        "options"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "chance": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 1.0
+        },
+        "exclusive": {
+          "type": "boolean",
+          "default": true
+        },
+        "visibility_rules": {
+          "$ref": "#/$defs/visibilityRules"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attachmentOption"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
     },
     "colorEntry": {
       "oneOf": [
@@ -85,7 +225,7 @@
         }
       ]
     },
-    "attachmentMesh": {
+    "weightedTextureEntry": {
       "oneOf": [
         {
           "$ref": "#/$defs/resourceLocation"
@@ -93,10 +233,10 @@
         {
           "type": "object",
           "required": [
-            "mesh"
+            "texture"
           ],
           "properties": {
-            "mesh": {
+            "texture": {
               "$ref": "#/$defs/resourceLocation"
             },
             "weight": {
@@ -108,50 +248,6 @@
           "additionalProperties": false
         }
       ]
-    },
-    "attachmentGroup": {
-      "type": "object",
-      "required": [
-        "bone",
-        "meshes"
-      ],
-      "properties": {
-        "bone": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1
-            }
-          ]
-        },
-        "chance": {
-          "type": "number",
-          "minimum": 0.0,
-          "maximum": 1.0,
-          "default": 1.0
-        },
-        "meshes": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/attachmentMesh"
-            },
-            {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/attachmentMesh"
-              },
-              "minItems": 1
-            }
-          ]
-        }
-      },
-      "additionalProperties": false
     },
     "textureLayerBase": {
       "type": "object",
@@ -188,30 +284,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "weightedTextureEntry": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/resourceLocation"
-        },
-        {
-          "type": "object",
-          "required": [
-            "texture"
-          ],
-          "properties": {
-            "texture": {
-              "$ref": "#/$defs/resourceLocation"
-            },
-            "weight": {
-              "type": "number",
-              "minimum": 0,
-              "default": 1.0
-            }
-          },
-          "additionalProperties": false
-        }
-      ]
     },
     "overlayGroup": {
       "type": "object",

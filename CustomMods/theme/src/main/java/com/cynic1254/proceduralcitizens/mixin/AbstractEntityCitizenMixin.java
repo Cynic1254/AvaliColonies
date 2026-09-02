@@ -2,8 +2,8 @@ package com.cynic1254.proceduralcitizens.mixin;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition;
+import com.cynic1254.proceduralcitizens.data.BoneData;
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
-import com.cynic1254.proceduralcitizens.data.encoders.CitizenAttachmentEncoding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -14,8 +14,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Map;
 
 @SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(AbstractEntityCitizen.class)
@@ -36,7 +34,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
         truethis.getEntityData().define(DATA_PROCEDURAL_TEXTURE, CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION.toString());
         truethis.getEntityData().define(DATA_PROCEDURAL_MODEL, CitizenDefaults.EMPTY_MODEL_ID.toString());
-        truethis.getEntityData().define(DATA_PROCEDURAL_ATTACHMENTS, "");
+        truethis.getEntityData().define(DATA_PROCEDURAL_ATTACHMENTS, BoneData.EMPTY_BONE_DATA.toString());
     }
 
     @Unique(silent = true)
@@ -53,11 +51,12 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
         return ResourceLocation.tryParse(truethis.getEntityData().get(DATA_PROCEDURAL_MODEL));
     }
 
+    //TODO: we probably want to implement a better cache strategy for this, parsing the string on every frame when it never changes once initialized is stupid
     @Unique(silent = true)
     @Override
-    public Map<String, ResourceLocation> getAttachments() {
+    public BoneData getAttachments() {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
-        return CitizenAttachmentEncoding.decode(truethis.getEntityData().get(DATA_PROCEDURAL_ATTACHMENTS));
+        return new BoneData(truethis.getEntityData().get(DATA_PROCEDURAL_ATTACHMENTS));
     }
 
     @Unique(silent = true)

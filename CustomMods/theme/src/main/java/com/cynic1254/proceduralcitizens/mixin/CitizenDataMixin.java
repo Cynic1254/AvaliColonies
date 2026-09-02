@@ -3,10 +3,10 @@ package com.cynic1254.proceduralcitizens.mixin;
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.client.rendering.textures.TextureIdentifierDefinition;
 import com.cynic1254.proceduralcitizens.cache.CitizenPackMetaCache;
+import com.cynic1254.proceduralcitizens.data.BoneData;
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
-import com.cynic1254.proceduralcitizens.cache.GeoCitizenDefinitionCache;
-import com.cynic1254.proceduralcitizens.data.encoders.CitizenAttachmentEncoding;
-import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
+import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.colony.CitizenData;
 import net.minecraft.nbt.CompoundTag;
@@ -38,26 +38,27 @@ public abstract class CitizenDataMixin {
     private ResourceLocation procedural$modelId = CitizenDefaults.EMPTY_MODEL_ID;
 
     @Unique
-    private Map<String, ResourceLocation> procedural$attachments = new HashMap<>();
+    private BoneData procedural$attachments = null;
 
     @Inject(method = "initForNewCivilian", at = @At("TAIL"), remap = false)
     private void procedural$rollAppearance(CallbackInfo ci) {
         CitizenData mixinThis = (CitizenData)(Object)this;
 
         ResourceLocation defId = procedural$pickDefinitionId();
-        GeoCitizenDefinition citizenDefinition = GeoCitizenDefinitionCache.getDefinition(defId).orElse(null);
+        CitizenDefinition citizenDefinition = CitizenDefinitionCache.getDefinition(defId).orElse(null);
 
         if (citizenDefinition == null)
         {
             // Set render data to a clear error state
             this.procedural$modelId = CitizenDefaults.MISSING_MODEL_ID;
             this.procedural$texture = CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION;
-            this.procedural$attachments = new HashMap<>();
+            this.procedural$attachments = null;
             return;
         }
 
         this.procedural$modelId = citizenDefinition.model();
         this.procedural$texture = citizenDefinition.rollTextureDefinition(mixinThis.getRandom());
+
         this.procedural$attachments = citizenDefinition.rollAttachments(mixinThis.getRandom());
     }
 
@@ -94,7 +95,7 @@ public abstract class CitizenDataMixin {
         nbtTagCompound.putString(TAG_PROCEDURAL_TEXTURE, procedural$texture.textureID());
         nbtTagCompound.putString(TAG_PROCEDURAL_MODEL, procedural$modelId == null ?
                 CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString());
-        nbtTagCompound.putString(TAG_PROCEDURAL_ATTACHMENTS, CitizenAttachmentEncoding.encode(procedural$attachments));
+        nbtTagCompound.putString(TAG_PROCEDURAL_ATTACHMENTS, procedural$attachments.toString());
     }
 
     @Inject(method = "deserializeNBT(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"), remap = false)
@@ -105,7 +106,7 @@ public abstract class CitizenDataMixin {
         ResourceLocation parsedModel = modelStr.isEmpty() ? null : ResourceLocation.tryParse(modelStr);
         procedural$modelId = parsedModel != null ? parsedModel : CitizenDefaults.MISSING_MODEL_ID;
 
-        procedural$attachments = CitizenAttachmentEncoding.decode(nbtTagCompound.getString(TAG_PROCEDURAL_ATTACHMENTS));
+        procedural$attachments = new BoneData(nbtTagCompound.getString(TAG_PROCEDURAL_ATTACHMENTS));
     }
 
     @Inject(method = "initEntityValues", at = @At("TAIL"), remap = false)
@@ -118,7 +119,7 @@ public abstract class CitizenDataMixin {
                     procedural$texture.textureID(),
                     procedural$modelId == null ?
                             CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString(),
-                    CitizenAttachmentEncoding.encode(procedural$attachments)
+                    procedural$attachments.toString()
             );
         });
     }

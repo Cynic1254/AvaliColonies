@@ -1,6 +1,6 @@
 {
   "model": "procedural_citizens:default",
-  "texture": {
+  "textures": {
     "base": {
       "textures": [
         "minecolonies:textures/entity/citizen/default/citizenmale1_a.png",
@@ -20,6 +20,17 @@
         "min": "#000000",
         "max": "#FFFFFF"
       }
+    }
+  },
+  "bones": {
+    "head": "head",
+    "left_hand": "leftHand",
+    "right_hand": "rightHand",
+    "armor": {
+      "head": ["armor_helmet_head"],
+      "chest": ["armor_chestplate_rightArm", "armor_chestplate_leftArm", "armor_chestplate_root"],
+      "legs": ["armor_leggings_leftLeg", "armor_leggings_rightLeg", "armor_leggings_root"],
+      "feet": ["armor_boots_leftLeg", "armor_boots_rightLeg"]
     }
   }
 }

@@ -1,10 +1,10 @@
 package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
-import com.cynic1254.proceduralcitizens.cache.CitizenArmorCache;
-import com.cynic1254.proceduralcitizens.cache.GeoCitizenDefinitionCache;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
+import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,7 +20,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 /// Render layer for rendering armor onto a citizen
 public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
 
-    private CitizenArmorCache currentCache = null;
+    private CitizenDefinition.ArmorBones armorBones = null;
 
     public CitizenArmorLayer(GeoCitizenRenderer entityRendererIn) {
         super(entityRendererIn);
@@ -28,15 +28,23 @@ public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
 
     @Override
     public void preRender(PoseStack poseStack, GeoCitizenAnimatable animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        currentCache = CitizenArmorCache.getCacheForModel(getCitizenRenderer().getCitizenModel(), renderer.getAnimatable());
+        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
 
-        setAllArmorBonesHidden(true);
+        if (definition.isEmpty()) {
+            return;
+        }
+
+        armorBones = definition.get().bones().armor();
+
+        setAllArmorBonesVisibility(bakedModel, false);
     }
 
+    //TODO: we should be able to perform this logic on the render function to save having to traverse the entire hierarchy
     @Override
     public void renderForBone(PoseStack poseStack, GeoCitizenAnimatable animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
-        var definition = GeoCitizenDefinitionCache.getDefinition(entity.getModelId());
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
 
         if (definition.isEmpty()) {
             return;
@@ -52,7 +60,7 @@ public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
             if (armorBone == null)
                 continue;
 
-            ResourceLocation armorTexture = definition.get().getTextureForMaterialAndSlot(stack);
+            ResourceLocation armorTexture = definition.get().textures().getTextureForMaterialAndSlot(stack);
             RenderType armorRenderType = RenderType.entityCutoutNoCull(armorTexture);
             VertexConsumer armorBuffer = bufferSource.getBuffer(armorRenderType);
 
@@ -67,21 +75,17 @@ public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
         }
     }
 
-    private GeoCitizenRenderer getCitizenRenderer() {
-        return (GeoCitizenRenderer) renderer;
-    }
-
-    private void setAllArmorBonesHidden(boolean hidden) {
-        for (GeoBone bone : currentCache.GetAllBones()) {
-            bone.setHidden(hidden);
+    private void setAllArmorBonesVisibility(BakedGeoModel bakedModel, boolean visible) {
+        for (String bone : armorBones.getAllBones()) {
+            bakedModel.getBone(bone).ifPresent(geoBone -> geoBone.setHidden(!visible));
         }
     }
 
     private GeoBone GetBoneForSlot(EquipmentSlot slot, GeoBone parent) {
-        var slotBones = currentCache.GetBonesForSlot(slot);
+        var slotBones = armorBones.getBonesForSlot(slot);
 
-        for (GeoBone slotBone : slotBones) {
-            if (slotBone.getParent().equals(parent))
+        for (GeoBone slotBone : parent.getChildBones()) {
+            if (slotBones.contains(slotBone.getName()))
                 return slotBone;
         }
 

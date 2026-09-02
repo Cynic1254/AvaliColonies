@@ -1,10 +1,9 @@
 package com.cynic1254.proceduralcitizens.cache;
 
 import com.cynic1254.proceduralcitizens.ProceduralCitizens;
-import com.cynic1254.proceduralcitizens.data.adapters.AttachmentMeshDeserializer;
 import com.cynic1254.proceduralcitizens.data.adapters.ListTypeAdapter;
 import com.cynic1254.proceduralcitizens.data.adapters.WeightedTextureDeserializer;
-import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition;
+import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -26,29 +25,29 @@ import java.util.Optional;
 
 /// Cache class for loading and caching Citizen Definitions
 @Mod.EventBusSubscriber(modid = ProceduralCitizens.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener {
+public class CitizenDefinitionCache extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .registerTypeAdapter(GeoCitizenDefinition.WeightedTexture.class, new WeightedTextureDeserializer())
-            .registerTypeAdapter(GeoCitizenDefinition.AttachmentMesh.class, new AttachmentMeshDeserializer())
+            .registerTypeAdapter(CitizenDefinition.WeightedTexture.class, new WeightedTextureDeserializer())
+            //.registerTypeAdapter(CitizenDefinition.AttachmentMesh.class, new AttachmentMeshDeserializer())
             .registerTypeAdapterFactory(new ListTypeAdapter())
             .create();
 
-    private static Map<ResourceLocation, GeoCitizenDefinition> REGISTRY = new HashMap<>();
+    private static Map<ResourceLocation, CitizenDefinition> REGISTRY = new HashMap<>();
 
-    public GeoCitizenDefinitionCache() {
+    public CitizenDefinitionCache() {
         super(GSON, "citizens");
     }
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> pObject, @NotNull ResourceManager pResourceManager, @NotNull ProfilerFiller pProfiler) {
-        Map<ResourceLocation, GeoCitizenDefinition> newRegistry = new HashMap<>();
+        Map<ResourceLocation, CitizenDefinition> newRegistry = new HashMap<>();
 
         pObject.forEach((location, jsonElement) -> {
             try {
-                GeoCitizenDefinition definition = GSON.fromJson(jsonElement, GeoCitizenDefinition.class);
+                CitizenDefinition definition = GSON.fromJson(jsonElement, CitizenDefinition.class);
                 newRegistry.put(location, definition);
                 LOGGER.info("Loaded Citizen Definition: {}", location);
             } catch (Exception e) {
@@ -60,7 +59,7 @@ public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener 
         LOGGER.info("Loaded {} citizen definitions.", REGISTRY.size());
     }
 
-    public static Optional<GeoCitizenDefinition> getDefinition(ResourceLocation id) {
+    public static Optional<CitizenDefinition> getDefinition(ResourceLocation id) {
         return Optional.ofNullable(
                 REGISTRY.get(id)
         );
@@ -68,6 +67,6 @@ public class GeoCitizenDefinitionCache extends SimpleJsonResourceReloadListener 
 
     @SubscribeEvent
     public static void onAddReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(new GeoCitizenDefinitionCache());
+        event.addListener(new CitizenDefinitionCache());
     }
 }

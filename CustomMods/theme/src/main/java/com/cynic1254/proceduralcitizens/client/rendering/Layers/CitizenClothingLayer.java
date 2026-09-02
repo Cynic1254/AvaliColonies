@@ -1,7 +1,7 @@
 package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
-import com.cynic1254.proceduralcitizens.cache.GeoCitizenDefinitionCache;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -22,7 +22,7 @@ public class CitizenClothingLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
     @Override
     public void render(PoseStack poseStack, GeoCitizenAnimatable animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
-        var definition = GeoCitizenDefinitionCache.getDefinition(entity.getModelId());
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
 
         if (definition.isEmpty())
             return;

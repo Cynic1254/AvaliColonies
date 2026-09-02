@@ -37,11 +37,6 @@ public class GeoCitizenRenderer extends GeoReplacedEntityRenderer<AbstractEntity
         return GeoCitizenModel.getOrCreateModel(entity.getModelId());
     }
 
-    /// convenient class to cast the returned model from a generic GeoModel to a GeoCitizenModel
-    public GeoCitizenModel getCitizenModel() {
-        return (GeoCitizenModel) getGeoModel();
-    }
-
     /// Fetch the Texture ID of the entity currently being rendered
     /// @return the Texture ID of the entity currently being rendered
     @Override

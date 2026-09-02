@@ -1,19 +1,24 @@
 package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
 import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
-import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenAttachmentModel;
-import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
+import com.cynic1254.proceduralcitizens.data.BoneData;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /// Render layer for rendering various attachments onto citizens
 public class CitizenAttachmentLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
@@ -21,41 +26,60 @@ public class CitizenAttachmentLayer extends GeoRenderLayer<GeoCitizenAnimatable>
         super(entityRendererIn);
     }
 
-    GeoCitizenRenderer getCitizenRenderer() {return (GeoCitizenRenderer) getRenderer();}
-
     @Override
-    public void render(PoseStack poseStack, GeoCitizenAnimatable animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        GeoCitizenRenderer citizenRenderer = getCitizenRenderer();
-        GeoCitizenModel baseModel = citizenRenderer.getCitizenModel();
+    public void preRender(PoseStack poseStack, GeoCitizenAnimatable animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        hideAllAttachments(bakedModel);
 
-        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen)citizenRenderer.getCurrentEntity();
+        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
+        BoneData boneData = entity.getAttachments();
 
-        ResourceLocation textureLocation = citizenRenderer.getTextureLocation(entity);
-        RenderType modelRenderType = RenderType.entityCutoutNoCull(textureLocation);
-        VertexConsumer modelBuffer = bufferSource.getBuffer(modelRenderType);
+        // show attachment bones that are always visible
+        setVisibilityOnBones(bakedModel, boneData.getAlwaysVisibleBones(), true);
 
-        entity.getAttachments().forEach(
-                (boneName, attachmentId) -> baseModel.getBone(boneName).ifPresent(targetBone -> {
-            poseStack.pushPose();
+        // show equipment bones when the slot *DOESN'T* have an item
+        var equipmentBones = boneData.getArmorHiddenBones();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (!slot.isArmor())
+                continue;
 
-            RenderUtils.prepMatrixForBone(poseStack, targetBone);
+            ItemStack stack = entity.getItemBySlot(slot);
+            if (!stack.isEmpty()) continue;
 
-            GeoCitizenAttachmentModel attachmentModel = GeoCitizenAttachmentModel.getOrCreateAttachment(attachmentId);
-            BakedGeoModel bakedAttachmentModel = attachmentModel.getBakedModel(attachmentId);
+            setVisibilityOnBones(bakedModel, equipmentBones.getOrDefault(slot, new HashSet<>()), true);
+        }
 
-            renderer.reRender(
-                    bakedAttachmentModel,
-                    poseStack,
-                    bufferSource,
-                    renderer.getAnimatable(),
-                    modelRenderType,
-                    modelBuffer,
-                    partialTick,
-                    packedLight,
-                    packedOverlay,
-                    1.0f, 1.0f, 1.0f, 1.0f);
+        IJob<?> job = entity.getCitizenJobHandler().getColonyJob();
 
-            poseStack.popPose();
-        }));
+        if (job == null)
+            return;
+
+        ResourceLocation jobKey = job.getJobRegistryEntry().getKey();
+
+        // Show all job bones except for the ones keyed with the job
+        var jobHiddenBones = boneData.getJobHiddenBones();
+        for (Set<String> bones : jobHiddenBones.values()) {
+            setVisibilityOnBones(bakedModel, bones, true);
+        }
+        setVisibilityOnBones(bakedModel, jobHiddenBones.getOrDefault(jobKey, new HashSet<>()), false);
+
+        // show the bones for the specific job
+        setVisibilityOnBones(bakedModel, boneData.getJobShownBones().getOrDefault(jobKey, new HashSet<>()), true);
+    }
+
+    private void hideAllAttachments(BakedGeoModel bakedModel) {
+        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
+
+        if (definition.isEmpty()) {
+            return;
+        }
+
+        setVisibilityOnBones(bakedModel, definition.get().getAllAttachmentBones(), false);
+    }
+
+    private void setVisibilityOnBones(BakedGeoModel bakedModel, Set<String> bones, boolean visible) {
+        for (String bone : bones) {
+            bakedModel.getBone(bone).ifPresent(geoBone -> geoBone.setHidden(!visible));
+        }
     }
 }

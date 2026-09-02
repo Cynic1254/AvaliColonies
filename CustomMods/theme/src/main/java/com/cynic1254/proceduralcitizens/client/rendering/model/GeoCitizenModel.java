@@ -2,8 +2,8 @@ package com.cynic1254.proceduralcitizens.client.rendering.model;
 
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.data.CitizenDefaults;
-import com.cynic1254.proceduralcitizens.cache.GeoCitizenDefinitionCache;
-import com.cynic1254.proceduralcitizens.data.records.GeoCitizenDefinition;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
+import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
@@ -17,8 +17,8 @@ public class GeoCitizenModel extends DefaultedEntityGeoModel<GeoCitizenAnimatabl
     private static final Map<ResourceLocation, GeoCitizenModel> modelRegistry = new HashMap<>();
     private static final GeoCitizenModel FALLBACK_MODEL = new GeoCitizenModel(CitizenDefaults.EMPTY_MODEL_ID);
 
-    public GeoCitizenModel(GeoCitizenDefinition definition) {
-        this(definition.model());
+    public GeoCitizenModel(CitizenDefinition definition) {
+        super(definition.model(), definition.bones().head());
     }
 
     private GeoCitizenModel(ResourceLocation model) {
@@ -30,7 +30,7 @@ public class GeoCitizenModel extends DefaultedEntityGeoModel<GeoCitizenAnimatabl
     /// @return the model corresponding to the ResourceLocation or a fully empty model if no model is present at the location
     public static GeoCitizenModel getOrCreateModel(ResourceLocation defId) {
         return modelRegistry.computeIfAbsent(defId, id ->
-                    GeoCitizenDefinitionCache.getDefinition(id)
+                    CitizenDefinitionCache.getDefinition(id)
                             .map(GeoCitizenModel::new)
                             .orElse(FALLBACK_MODEL)
         );

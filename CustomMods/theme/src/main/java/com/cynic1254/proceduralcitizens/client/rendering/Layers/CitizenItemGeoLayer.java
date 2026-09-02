@@ -1,5 +1,7 @@
 package com.cynic1254.proceduralcitizens.client.rendering.Layers;
 
+import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
+import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -24,20 +26,31 @@ public class CitizenItemGeoLayer extends BlockAndItemGeoLayer<GeoCitizenAnimatab
 
     @Override
     protected @Nullable ItemStack getStackForBone(GeoBone bone, GeoCitizenAnimatable animatable) {
-        AbstractEntityCitizen citizen = ((GeoCitizenRenderer)renderer).getCurrentEntity();
+        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
 
-        if (Objects.equals(bone.getName(), "RightHand")) {
-            return citizen.getMainHandItem();
+        if (definition.isEmpty()) {
+            return ItemStack.EMPTY;
         }
-        if (Objects.equals(bone.getName(), "LeftHand")) {
-            return citizen.getOffhandItem();
+
+        if (Objects.equals(bone.getName(), definition.get().bones().rightHand())) {
+            return entity.getMainHandItem();
+        }
+        if (Objects.equals(bone.getName(), definition.get().bones().leftHand())) {
+            return entity.getOffhandItem();
         }
         return ItemStack.EMPTY;
     }
 
     @Override
     protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, GeoCitizenAnimatable animatable) {
-        return Objects.equals(bone.getName(), "RightHand") ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+        var entity = (AbstractEntityCitizen & GeoAbstractEntityCitizen) ((GeoCitizenRenderer) renderer).getCurrentEntity();
+        var definition = CitizenDefinitionCache.getDefinition(entity.getModelId());
+
+        return definition.filter(citizenDefinition -> Objects.equals(bone.getName(), citizenDefinition.bones().rightHand()))
+                .map(citizenDefinition -> ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+                .orElse(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+
     }
 
     @Override
