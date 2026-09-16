@@ -4,7 +4,7 @@ import com.cynic1254.proceduralcitizens.GeoAbstractEntityCitizen;
 import com.cynic1254.proceduralcitizens.cache.CitizenDefinitionCache;
 import com.cynic1254.proceduralcitizens.client.rendering.GeoCitizenAnimatable;
 import com.cynic1254.proceduralcitizens.client.rendering.renderers.GeoCitizenRenderer;
-import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
+import com.cynic1254.proceduralcitizens.data.records.bones.ArmorBones;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,7 +20,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 /// Render layer for rendering armor onto a citizen
 public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
 
-    private CitizenDefinition.ArmorBones armorBones = null;
+    private ArmorBones armorBones = null;
 
     public CitizenArmorLayer(GeoCitizenRenderer entityRendererIn) {
         super(entityRendererIn);

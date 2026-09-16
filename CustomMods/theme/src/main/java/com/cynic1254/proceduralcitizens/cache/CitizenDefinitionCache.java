@@ -4,6 +4,9 @@ import com.cynic1254.proceduralcitizens.ProceduralCitizens;
 import com.cynic1254.proceduralcitizens.data.adapters.ListTypeAdapter;
 import com.cynic1254.proceduralcitizens.data.adapters.WeightedTextureDeserializer;
 import com.cynic1254.proceduralcitizens.data.records.CitizenDefinition;
+import com.cynic1254.proceduralcitizens.data.adapters.ColorBaseDeserializer;
+import com.cynic1254.proceduralcitizens.data.records.texture.WeightedTexture;
+import com.cynic1254.proceduralcitizens.data.records.texture.color.ColorBase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -30,7 +33,8 @@ public class CitizenDefinitionCache extends SimpleJsonResourceReloadListener {
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .registerTypeAdapter(CitizenDefinition.WeightedTexture.class, new WeightedTextureDeserializer())
+            .registerTypeAdapter(WeightedTexture.class, new WeightedTextureDeserializer())
+            .registerTypeAdapter(ColorBase.class, new ColorBaseDeserializer())
             //.registerTypeAdapter(CitizenDefinition.AttachmentMesh.class, new AttachmentMeshDeserializer())
             .registerTypeAdapterFactory(new ListTypeAdapter())
             .create();

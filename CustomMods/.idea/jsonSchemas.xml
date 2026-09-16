@@ -9,6 +9,7 @@
               <option name="generatedName" value="New Schema" />
               <option name="name" value="Citizen Procedural Definition" />
               <option name="relativePathToSchema" value="../DesignDocuments/Data Structures/Model/Schema.json" />
+              <option name="schemaVersion" value="JSON Schema 2020.12" />
               <option name="patterns">
                 <list>
                   <Item>
@@ -54,6 +55,9 @@
                   </Item>
                   <Item>
                     <option name="path" value="connector/src/main/resources/avaliconnector.mixins.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="theme/src/main/resources/procedural_citizens.mixins.json" />
                   </Item>
                 </list>
               </option>
