@@ -21,6 +21,7 @@ public record AttachmentGroup(
         exclusive = Objects.requireNonNullElse(exclusive, true);
         visibilityRules = Objects.requireNonNullElse(visibilityRules, new VisibilityRules(null, null, null));
         options = Objects.requireNonNullElse(options, List.of());
+        chance = Objects.requireNonNullElse(chance, 1.0f);
     }
 
     public List<AttachmentOption> roll(Random random) {

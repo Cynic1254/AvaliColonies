@@ -56,7 +56,7 @@ public abstract class CitizenDataMixin {
             return;
         }
 
-        this.procedural$modelId = citizenDefinition.model();
+        this.procedural$modelId = defId;
         this.procedural$texture = citizenDefinition.rollTextureDefinition(mixinThis.getRandom());
 
         this.procedural$attachments = citizenDefinition.rollAttachments(mixinThis.getRandom());

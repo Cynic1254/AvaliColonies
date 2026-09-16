@@ -1,27 +1,92 @@
 {
-  "model": "procedural_citizens:default",
+  "model": "procedural_citizens:human.default",
   "textures": {
     "base": {
       "textures": [
-        "minecolonies:textures/entity/citizen/default/citizenmale1_a.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale1_b.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale1_d.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale1_w.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale2_a.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale2_b.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale2_d.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale2_w.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale3_a.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale3_b.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale3_d.png",
-        "minecolonies:textures/entity/citizen/default/citizenmale3_w.png"
+        "procedural_citizens:textures/human/base.png"
       ],
-      "colors": {
-        "min": "#000000",
-        "max": "#FFFFFF"
+      "colors": "#FFFFFF"
+    },
+    "clothing_override_path": "procedural_citizens:textures/human/",
+    "overlays": [
+      {
+        "textures": "procedural_citizens:textures/human/eyes.png",
+        "colors": [
+          "#2C1609",
+          "#3B2219",
+          "#634E34",
+          "#805632",
+          "#A3C1AD",
+          "#6BB4D6",
+          "#2E5A88",
+          "#1B365D",
+          "#2D5A27",
+          "#5B8A62",
+          "#6B7D35",
+          "#1E4D2B",
+          "#9E7B3B",
+          "#837E4C",
+          "#6E6D43",
+          "#C68642",
+          "#B86B32",
+          "#DAA520",
+          "#708090",
+          "#91A3B0",
+          "#C0C0C0",
+          "#4A3B6A",
+          "#B22222"
+        ]
+      },
+      {
+        "textures": "procedural_citizens:textures/human/hair.png",
+        "colors": [
+          "#090806",
+          "#2C221E",
+          "#3B2317",
+          "#4A3728",
+          "#784A33",
+          "#A7856A",
+          "#DEBA9D",
+          "#E6CEA8",
+          "#F5E0B3",
+          "#FFF5DB",
+          "#B8977E",
+          "#A56B46",
+          "#B55239",
+          "#8D021F",
+          "#58111A",
+          "#990000",
+          "#E0115F",
+          "#FF69B4",
+          "#E6E6FA",
+          "#9B59B6",
+          "#4B0082",
+          "#20B2AA",
+          "#008080",
+          "#000080",
+          "#121010",
+          "#71706E",
+          "#D3D3D3"
+        ]
       }
-    }
+    ]
   },
+  "attachments": [
+    {
+      "name": "PonyTail",
+      "visibility_rules": {
+        "hide_on_armor_slots": [
+          "head"
+        ]
+      },
+      "options": [
+        {
+          "name": "hair",
+          "bone": "PonyTail"
+        }
+      ]
+    }
+  ],
   "bones": {
     "head": "head",
     "left_hand": "leftHand",
