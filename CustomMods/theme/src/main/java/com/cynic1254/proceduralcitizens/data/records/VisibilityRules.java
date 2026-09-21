@@ -41,7 +41,7 @@ public record VisibilityRules(
             Map<ResourceLocation, Set<String>> jobShown
     ) {
         // Apply Base Visibility
-        if (showOnJobs.isEmpty()) {
+        if (showOnJobs.isEmpty() && hideOnArmorSlots.isEmpty() && hideOnJobs.isEmpty()) {
             alwaysVisible.addAll(bones);
         }
 

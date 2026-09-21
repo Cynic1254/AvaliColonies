@@ -18,12 +18,14 @@ import java.util.stream.Collectors;
 
 public record CitizenDefinition(
         ResourceLocation model,
+        ResourceLocation sound,
         BoneDefinitions bones,
         TextureDefinition textures,
         List<AttachmentGroup> attachments
 ) {
     public CitizenDefinition {
         model = Objects.requireNonNullElse(model, CitizenDefaults.MISSING_MODEL_ID);
+        sound = Objects.requireNonNullElse(sound, CitizenDefaults.DEFAULT_CITIZEN_SOUND_ID);
         bones = Objects.requireNonNullElse(bones, new BoneDefinitions(null, null, null, null));
         textures = Objects.requireNonNullElse(textures, new TextureDefinition(null, null, null, null));
         attachments = Objects.requireNonNullElse(attachments, List.of());

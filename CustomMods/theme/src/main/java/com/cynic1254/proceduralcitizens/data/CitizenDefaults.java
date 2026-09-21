@@ -17,6 +17,8 @@ public class CitizenDefaults {
 
     public static final ResourceLocation DEFAULT_CITIZEN_DEFINITION_ID = ResourceLocation.fromNamespaceAndPath(ProceduralCitizens.MODID, "default");
 
+    public static final ResourceLocation DEFAULT_CITIZEN_SOUND_ID = ResourceLocation.fromNamespaceAndPath("minecolonies", "citizen.druid.male1");
+
     //Default TextureDefinition, the definition is just a missingno texture with no tint or blending applied
     public static final TextureIdentifierDefinition PLACEHOLDER_TEXTURE_DEFINITION = TextureIdentifierDefinition.fromObjects(
             List.of(new TextureIdentifierDefinition.TextureIdentifierObject(MISSINGNO_TEXTURE, 0xFFFFFF, TextureIdentifierDefinition.BlendMode.NORMAL))

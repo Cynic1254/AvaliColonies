@@ -27,7 +27,7 @@ public abstract class CitizenDataMixin {
     @Unique
     private static final String TAG_PROCEDURAL_TEXTURE = "proceduralTexture";
     @Unique
-    private static final String TAG_PROCEDURAL_MODEL = "proceduralModel";
+    private static final String TAG_PROCEDURAL_DEFINITION = "proceduralDefinition";
     @Unique
     private static final String TAG_PROCEDURAL_ATTACHMENTS = "proceduralAttachment";
 
@@ -35,7 +35,7 @@ public abstract class CitizenDataMixin {
     private TextureIdentifierDefinition procedural$texture = CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION;
 
     @Unique
-    private ResourceLocation procedural$modelId = CitizenDefaults.EMPTY_MODEL_ID;
+    private ResourceLocation procedural$definitionId = CitizenDefaults.EMPTY_MODEL_ID;
 
     @Unique
     private BoneData procedural$attachments = null;
@@ -50,13 +50,13 @@ public abstract class CitizenDataMixin {
         if (citizenDefinition == null)
         {
             // Set render data to a clear error state
-            this.procedural$modelId = CitizenDefaults.MISSING_MODEL_ID;
+            this.procedural$definitionId = CitizenDefaults.MISSING_MODEL_ID;
             this.procedural$texture = CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION;
             this.procedural$attachments = null;
             return;
         }
 
-        this.procedural$modelId = defId;
+        this.procedural$definitionId = defId;
         this.procedural$texture = citizenDefinition.rollTextureDefinition(mixinThis.getRandom());
 
         this.procedural$attachments = citizenDefinition.rollAttachments(mixinThis.getRandom());
@@ -93,8 +93,8 @@ public abstract class CitizenDataMixin {
     )
     private void procedural$serialize(CallbackInfoReturnable<CompoundTag> cir, CompoundTag nbtTagCompound) {
         nbtTagCompound.putString(TAG_PROCEDURAL_TEXTURE, procedural$texture.textureID());
-        nbtTagCompound.putString(TAG_PROCEDURAL_MODEL, procedural$modelId == null ?
-                CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString());
+        nbtTagCompound.putString(TAG_PROCEDURAL_DEFINITION, procedural$definitionId == null ?
+                CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$definitionId.toString());
         nbtTagCompound.putString(TAG_PROCEDURAL_ATTACHMENTS, procedural$attachments.toString());
     }
 
@@ -102,9 +102,9 @@ public abstract class CitizenDataMixin {
     private void procedural$deserialize(CompoundTag nbtTagCompound, CallbackInfo ci) {
         procedural$texture = new TextureIdentifierDefinition(nbtTagCompound.getString(TAG_PROCEDURAL_TEXTURE));
 
-        String modelStr = nbtTagCompound.getString(TAG_PROCEDURAL_MODEL);
+        String modelStr = nbtTagCompound.getString(TAG_PROCEDURAL_DEFINITION);
         ResourceLocation parsedModel = modelStr.isEmpty() ? null : ResourceLocation.tryParse(modelStr);
-        procedural$modelId = parsedModel != null ? parsedModel : CitizenDefaults.MISSING_MODEL_ID;
+        procedural$definitionId = parsedModel != null ? parsedModel : CitizenDefaults.MISSING_MODEL_ID;
 
         procedural$attachments = new BoneData(nbtTagCompound.getString(TAG_PROCEDURAL_ATTACHMENTS));
     }
@@ -117,8 +117,8 @@ public abstract class CitizenDataMixin {
             var mutable = (AbstractEntityCitizen & GeoAbstractEntityCitizen) citizen;
             mutable.setRenderData(
                     procedural$texture.textureID(),
-                    procedural$modelId == null ?
-                            CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$modelId.toString(),
+                    procedural$definitionId == null ?
+                            CitizenDefaults.MISSING_MODEL_ID.toString() : procedural$definitionId.toString(),
                     procedural$attachments.toString()
             );
         });

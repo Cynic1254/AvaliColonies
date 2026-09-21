@@ -2,6 +2,7 @@ package com.cynic1254.proceduralcitizens.client.Listeners;
 
 import com.cynic1254.proceduralcitizens.ProceduralCitizens;
 import com.cynic1254.proceduralcitizens.cache.CitizenPackMetaCache;
+import com.cynic1254.proceduralcitizens.cache.CitizenSoundCache;
 import com.cynic1254.proceduralcitizens.client.rendering.model.GeoCitizenModel;
 import com.cynic1254.proceduralcitizens.cache.CitizenTextureCache;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -31,5 +32,6 @@ public class ClientRenderCacheReloadListener extends SimplePreparableReloadListe
         CitizenTextureCache.clearTextureCache();
         GeoCitizenModel.clearCache();
         CitizenPackMetaCache.clearMetaCache();
+        CitizenSoundCache.ClearCache();
     }
 }

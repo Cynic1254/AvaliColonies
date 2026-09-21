@@ -23,7 +23,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
     private static final EntityDataAccessor<String> DATA_PROCEDURAL_TEXTURE =
             SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
     @Unique
-    private static final EntityDataAccessor<String> DATA_PROCEDURAL_MODEL =
+    private static final EntityDataAccessor<String> DATA_MODEL_DEFINITION =
             SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
     @Unique
     private static final EntityDataAccessor<String> DATA_PROCEDURAL_ATTACHMENTS =
@@ -33,7 +33,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
     private void procedural$defineData(CallbackInfo ci) {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
         truethis.getEntityData().define(DATA_PROCEDURAL_TEXTURE, CitizenDefaults.PLACEHOLDER_TEXTURE_DEFINITION.toString());
-        truethis.getEntityData().define(DATA_PROCEDURAL_MODEL, CitizenDefaults.EMPTY_MODEL_ID.toString());
+        truethis.getEntityData().define(DATA_MODEL_DEFINITION, CitizenDefaults.EMPTY_MODEL_ID.toString());
         truethis.getEntityData().define(DATA_PROCEDURAL_ATTACHMENTS, BoneData.EMPTY_BONE_DATA.toString());
     }
 
@@ -48,7 +48,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
     @Override
     public ResourceLocation getModelId() {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
-        return ResourceLocation.tryParse(truethis.getEntityData().get(DATA_PROCEDURAL_MODEL));
+        return ResourceLocation.tryParse(truethis.getEntityData().get(DATA_MODEL_DEFINITION));
     }
 
     //TODO: we probably want to implement a better cache strategy for this, parsing the string on every frame when it never changes once initialized is stupid
@@ -64,7 +64,7 @@ public class AbstractEntityCitizenMixin implements GeoAbstractEntityCitizen {
     public void setRenderData(String texture, String model, String attachments) {
         var truethis = (AbstractEntityCitizen & GeoAbstractEntityCitizen)(Object)this;
         truethis.getEntityData().set(DATA_PROCEDURAL_TEXTURE, texture);
-        truethis.getEntityData().set(DATA_PROCEDURAL_MODEL, model);
+        truethis.getEntityData().set(DATA_MODEL_DEFINITION, model);
         truethis.getEntityData().set(DATA_PROCEDURAL_ATTACHMENTS, attachments);
     }
 }

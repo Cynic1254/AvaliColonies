@@ -6,7 +6,8 @@
   "refmap": "procedural_citizens.refmap.json",
   "mixins": [
     "AbstractEntityCitizenMixin",
-    "CitizenDataMixin"
+    "CitizenDataMixin",
+    "SoundUtilsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
