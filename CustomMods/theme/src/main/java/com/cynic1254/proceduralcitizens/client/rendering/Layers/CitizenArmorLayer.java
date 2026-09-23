@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -60,16 +61,26 @@ public class CitizenArmorLayer extends GeoRenderLayer<GeoCitizenAnimatable> {
             if (armorBone == null)
                 continue;
 
+            int color = 0xFFFFFFFF;
+
+            if (stack.getItem() instanceof DyeableArmorItem)
+                color = ((DyeableArmorItem) stack.getItem()).getColor(stack);
+
             ResourceLocation armorTexture = definition.get().textures().getTextureForMaterialAndSlot(stack);
             RenderType armorRenderType = RenderType.entityCutoutNoCull(armorTexture);
             VertexConsumer armorBuffer = bufferSource.getBuffer(armorRenderType);
 
             armorBone.setHidden(false);
+
+            float r = ((color >> 16) & 0xFF) / 255.0f;
+            float g = ((color >> 8) & 0xFF) / 255.0f;
+            float b = (color & 0xFF) / 255.0f;
+
             getRenderer().renderRecursively(
                     poseStack, animatable, armorBone,
                     armorRenderType, bufferSource, armorBuffer,
                     false, partialTick, packedLight, packedOverlay,
-                    1.0f, 1.0f, 1.0f, 1.0f
+                    r, g, b, 1.0f
             );
             armorBone.setHidden(true);
         }
